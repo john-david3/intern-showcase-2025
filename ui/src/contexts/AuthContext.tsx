@@ -1,10 +1,21 @@
-import { createContext, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 interface AuthContextType {
+    isLoggedIn: boolean;
     setIsLoggedIn: (value: boolean) => void;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    return (
+        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+            {children}
+        </AuthContext.Provider>
+    );
+};
 
 export function useAuth() {
     const context = useContext(AuthContext);

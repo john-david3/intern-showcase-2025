@@ -144,7 +144,7 @@ const SignupForm = () => {
                 )}
                 <input
                     name="location"
-                    type="location"
+                    type="text"
                     placeholder="Enter Office Location"
                     onChange={handleInputChange}
                     value={formData.location}
