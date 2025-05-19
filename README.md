@@ -7,6 +7,11 @@ The purpose of this project is to make it ridiculously easy for F5/NGINX employe
 - Organising places to eat for company dinners
 - and more!
 
+## Prerequisites
+- NodeJS
+- Vite + React
+- Golang 1.24.x
+
 ## Tech Stack
 This project is a full stack web app. Our tech stack consists of the following:
 - Frontend: React + Vite with NodeJS
