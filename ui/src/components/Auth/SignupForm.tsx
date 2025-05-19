@@ -16,7 +16,7 @@ interface FormErrors {
     general?: string;
 }
 
-const SignupForm: React.FC = () => {
+const SignupForm = () => {
     const { setIsLoggedIn } = useAuth();
     const [errors, setErrors] = useState<FormErrors>({});
 
