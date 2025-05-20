@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
-interface RegisterFormData {
+interface LoginFormData {
     email: string;
     password: string;
-    password2: string;
-    location: string;
 }
 
 interface FormErrors {
@@ -16,15 +14,13 @@ interface FormErrors {
     general?: string;
 }
 
-const SignupForm = () => {
+const LoginForm = () => {
     const { setIsLoggedIn } = useAuth();
     const [errors, setErrors] = useState<FormErrors>({});
 
-    const [formData, setFormData] = useState<RegisterFormData>({
+    const [formData, setFormData] = useState<LoginFormData>({
         email: "",
         password: "",
-        password2: "",
-        location: "",
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,15 +36,10 @@ const SignupForm = () => {
 
         // Check for empty fields
         Object.keys(formData).forEach((key) => {
-            if (!formData[key as keyof RegisterFormData]) {
+            if (!formData[key as keyof LoginFormData]) {
                 newErrors[key as keyof FormErrors] = "This field is required";
             }
         });
-
-        // Check password match
-        if (formData.password !== formData.password2) {
-            newErrors.password2 = "Passwords do not match";
-        }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -59,7 +50,7 @@ const SignupForm = () => {
 
         if (validateForm()) {
             try {
-                const response = await fetch("http://127.0.0.1:8080/api/signup", {
+                await fetch("http://127.0.0.1:8080/api/login", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -67,16 +58,16 @@ const SignupForm = () => {
                     body: JSON.stringify(formData),
                 });
 
-                const data = await response.json();
-
-                if (data.account_created) {
-                    console.log("Registration Successful! Account created successfully");
-                    setIsLoggedIn(true);
-                    window.location.reload();
-                } else {
-                    console.log("Failed to create account.");
-                    setIsLoggedIn(false);
-                }
+                // const data = await response.json();
+                //
+                // if (data.account_created) {
+                //     console.log("Registration Successful! Account created successfully");
+                //     setIsLoggedIn(true);
+                //     window.location.reload();
+                // } else {
+                //     console.log("Failed to create account.");
+                //     setIsLoggedIn(false);
+                // }
             } catch (error) {
                 console.error("Error Registering:", error);
                 setErrors({
@@ -88,8 +79,8 @@ const SignupForm = () => {
 
     return (
         <section>
-            <h2>Signup</h2>
-            <form onSubmit={handleSubmit} id="register-form">
+            <h2>Login</h2>
+            <form onSubmit={handleSubmit} id="login-form">
                 {errors.general && (
                     <p>{errors.general}</p>
                 )}
@@ -116,32 +107,10 @@ const SignupForm = () => {
                     value={formData.password}
                 />
 
-                {errors.password2 && (
-                    <p>{errors.password2}</p>
-                )}
-                <input
-                    name="password2"
-                    type="password"
-                    placeholder="Confirm Password"
-                    onChange={handleInputChange}
-                    value={formData.password2}
-                />
-
-                {errors.location && (
-                    <p>{errors.location}</p>
-                )}
-                <input
-                    name="location"
-                    type="text"
-                    placeholder="Enter Office Location"
-                    onChange={handleInputChange}
-                    value={formData.location}
-                />
-
-                <button type="submit">Signup</button>
+                <button type="submit">Login</button>
             </form>
         </section>
     );
 };
 
-export default SignupForm;
+export default LoginForm;
