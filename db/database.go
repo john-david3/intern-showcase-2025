@@ -13,7 +13,7 @@ var db *sql.DB
 func CreateConnection() error {
 	var err error
 
-	db, err = sql.Open("sqlite3", "./identifier.sqlite")
+	db, err = sql.Open("sqlite3", "../identifier.sqlite")
 
 	return err
 }

@@ -16,18 +16,26 @@ func signup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-	response := map[string]bool{}
+	response := map[string]bool{"account_created": false}
 
 	// Read form data from frontend
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		slog.Error("error reading signup data", "error", err)
+
+		_ = json.NewEncoder(w).Encode(response)
+		return
 	}
 
 	// Unmarshall the data
 	signupData := make(map[string]string)
-	err = json.Unmarshal(body, &signupData)
 	fmt.Println(signupData)
+	err = json.Unmarshal(body, &signupData)
+	if err != nil {
+		slog.Error("error unmarshalling signup data", "error", err)
+		_ = json.NewEncoder(w).Encode(response)
+		return
+	}
 
 	// Collect & check the data
 	email := utils.Sanitise(signupData["email"])
@@ -35,42 +43,42 @@ func signup(w http.ResponseWriter, r *http.Request) {
 	password2 := utils.Sanitise(signupData["password2"])
 	location := utils.Sanitise(signupData["location"])
 
-	passwordHash := utils.HashData(password)
-	password2Hash := utils.HashData(password2)
-
-	if string(passwordHash) != string(password2Hash) {
+	if password != password2 {
 		slog.Error("passwords do not match")
-		response["account_created"] = false
-		json.NewEncoder(w).Encode(response)
+		_ = json.NewEncoder(w).Encode(response)
+		return
 	}
 
 	// Add user to the database
-	db.CreateConnection()
+	err = db.CreateConnection()
+	if err != nil {
+		slog.Error("error creating connection", "error", err)
+		_ = json.NewEncoder(w).Encode(response)
+		return
+	}
 	defer db.CloseConnection()
 
 	// Check if email already exists
 	rows, err := db.Fetch("SELECT * FROM users WHERE email = ?", email)
 	if err != nil || rows != nil {
 		slog.Error("error creating user", "error", err)
-		response["account_created"] = false
-		json.NewEncoder(w).Encode(response)
+		_ = json.NewEncoder(w).Encode(response)
 	}
 
 	// Add user to database
 	if email != "" && password != "" && location != "" && password2 != "" {
-		err = db.Execute("INSERT INTO users (email, password, location) VALUES (?, ?, ?)", email, string(passwordHash), location)
+		err = db.Execute("INSERT INTO users (email, password, location) VALUES (?, ?, ?)", email, password, location)
 		if err != nil {
 			slog.Error("error creating user", "error", err)
-			response["account_created"] = false
-			json.NewEncoder(w).Encode(response)
-
+			_ = json.NewEncoder(w).Encode(response)
+			return
 		}
 	}
 
 	// Successful Creation
 	slog.Info("user created", "email", email)
 	response["account_created"] = true
-	json.NewEncoder(w).Encode(response)
+	_ = json.NewEncoder(w).Encode(response)
 
 }
 

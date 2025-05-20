@@ -1,10 +1,15 @@
 package utils
 
-import "crypto/sha256"
+import (
+	"crypto/sha256"
+	"fmt"
+	"strings"
+)
 
-func HashData(data string) []byte {
+func HashData(data string) string {
 	h := sha256.New()
 	h.Write([]byte(data))
 	bs := h.Sum(nil)
-	return bs
+	res := strings.TrimSpace(fmt.Sprintf("%x", bs))
+	return res
 }

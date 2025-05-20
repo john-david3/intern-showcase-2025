@@ -59,7 +59,7 @@ const SignupForm = () => {
 
         if (validateForm()) {
             try {
-                const response = await fetch("http://127.0.0.1:8080/api/signup", {
+                await fetch("http://127.0.0.1:8080/api/signup", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -67,16 +67,16 @@ const SignupForm = () => {
                     body: JSON.stringify(formData),
                 });
 
-                const data = await response.json();
-
-                if (data.account_created) {
-                    console.log("Registration Successful! Account created successfully");
-                    setIsLoggedIn(true);
-                    window.location.reload();
-                } else {
-                    console.log("Failed to create account.");
-                    setIsLoggedIn(false);
-                }
+                // const data = await response.json();
+                //
+                // if (data.account_created) {
+                //     console.log("Registration Successful! Account created successfully");
+                //     setIsLoggedIn(true);
+                //     window.location.reload();
+                // } else {
+                //     console.log("Failed to create account.");
+                //     setIsLoggedIn(false);
+                // }
             } catch (error) {
                 console.error("Error Registering:", error);
                 setErrors({
