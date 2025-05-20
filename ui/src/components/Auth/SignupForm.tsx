@@ -59,12 +59,11 @@ const SignupForm = () => {
 
         if (validateForm()) {
             try {
-                const response = await fetch("/api/signup", {
+                const response = await fetch("http://127.0.0.1:8080/api/signup", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type": "application/json"
                     },
-                    credentials: "include",
                     body: JSON.stringify(formData),
                 });
 
@@ -75,19 +74,8 @@ const SignupForm = () => {
                     setIsLoggedIn(true);
                     window.location.reload();
                 } else {
-                    // Handle validation errors from server
-                    if (data.error_fields) {
-                        const newErrors: FormErrors = {};
-                        for (const field of data.error_fields) {
-                            newErrors[field as keyof FormErrors] = data.message;
-                        }
-                        setErrors(newErrors);
-                    } else {
-                        // If no specific fields are indicated, set a general error
-                        setErrors({
-                            general: data.message || "An error occurred during registration",
-                        });
-                    }
+                    console.log("Failed to create account.");
+                    setIsLoggedIn(false);
                 }
             } catch (error) {
                 console.error("Error Registering:", error);

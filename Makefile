@@ -12,7 +12,7 @@ REACT_DIR		= ui
 
 run:
 	@echo "Running app"
-	@cd ${PROJECT_DIR} && $(GORUN) $(PROJECT_FILE)
+	@CGO_ENABLED=1 && cd ${PROJECT_DIR} && $(GORUN) $(PROJECT_FILE)
 
 dev:
 	@echo "Running React app"

@@ -10,3 +10,5 @@ CREATE TABLE users (
 
 INSERT INTO users (email, password, firstname, lastname, location)
 VALUES ('admin', 'admin', 'admin', 'admin', 'admin');
+
+SELECT * FROM users;
