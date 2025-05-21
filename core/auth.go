@@ -18,26 +18,25 @@ func readData(body io.Reader) ([]byte, error) {
 	return res, nil
 }
 
-func signup(w http.ResponseWriter, r *http.Request) {
+func Signup(w http.ResponseWriter, r *http.Request) {
 	// Set up a writer
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-	response := map[string]bool{"account_created": false}
 
 	// Read form data from frontend
 	body, err := readData(r.Body)
 	if err != nil {
-		slog.Error("error reading from frontend", "error", err)
+		utils.SendErrorResponse(w, err, "error reading body")
+		return
 	}
 
 	// Unmarshall the data
 	signupData := make(map[string]string)
 	err = json.Unmarshal(body, &signupData)
 	if err != nil {
-		slog.Error("error unmarshalling signup data", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
+		utils.SendErrorResponse(w, err, "error unmarshalling body")
 		return
 	}
 
@@ -48,16 +47,14 @@ func signup(w http.ResponseWriter, r *http.Request) {
 	location := utils.Sanitise(signupData["location"])
 
 	if password != password2 {
-		slog.Error("passwords do not match")
-		_ = json.NewEncoder(w).Encode(response)
+		utils.SendErrorResponse(w, err, "passwords do not match")
 		return
 	}
 
 	// Add user to the database
 	err = db.CreateConnection()
 	if err != nil {
-		slog.Error("error creating connection", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
+		utils.SendErrorResponse(w, err, "error creating connection")
 		return
 	}
 	defer db.CloseConnection()
@@ -69,8 +66,7 @@ func signup(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		strRows, err = db.DBRowToStringList(rows)
 		if err != nil || strRows != nil {
-			slog.Error("error creating user", "error", err)
-			_ = json.NewEncoder(w).Encode(response)
+			utils.SendErrorResponse(w, err, "error fetching rows")
 			return
 		}
 	}
@@ -79,20 +75,18 @@ func signup(w http.ResponseWriter, r *http.Request) {
 	if email != "" && password != "" && location != "" && password2 != "" {
 		err = db.Execute("INSERT INTO users (email, password, location) VALUES (?, ?, ?)", email, password, location)
 		if err != nil {
-			slog.Error("error creating user", "error", err)
-			_ = json.NewEncoder(w).Encode(response)
+			utils.SendErrorResponse(w, err, "error inserting user")
 			return
 		}
 	}
 
 	// Successful Creation
 	slog.Info("user created", "email", email)
-	response["account_created"] = true
-	_ = json.NewEncoder(w).Encode(response)
+	_ = json.NewEncoder(w).Encode(map[string]bool{"account_created": true})
 
 }
 
-func login(w http.ResponseWriter, r *http.Request) {
+func Login(w http.ResponseWriter, r *http.Request) {
 	// Set up a writer
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -165,7 +159,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	// Update session information
 	userId := dataset[0]
-	session, err := store.Get(r, "users")
+	session, err := store.Get(r, "session")
 	session.Values["user_id"] = userId
 	session.Values["email"] = email
 	err = session.Save(r, w)
@@ -176,10 +170,10 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func logout(w http.ResponseWriter, r *http.Request) {
+func Logout(w http.ResponseWriter, r *http.Request) {
 	response := map[string]bool{"account_created": false}
 
-	session, err := store.Get(r, "user-id")
+	session, err := store.Get(r, "session")
 	if err != nil {
 		slog.Error("error getting session", "error", err)
 		return

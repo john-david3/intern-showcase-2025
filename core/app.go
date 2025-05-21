@@ -10,9 +10,12 @@ var store = sessions.NewCookieStore([]byte("super-secretive-key"))
 
 func Run() {
 	// Authentication routes
-	http.HandleFunc("/api/signup", signup)
-	http.HandleFunc("/api/login", login)
-	http.HandleFunc("/api/logout", logout)
+	http.HandleFunc("/api/signup", Signup)
+	http.HandleFunc("/api/login", Login)
+	http.HandleFunc("/api/logout", Logout)
+
+	// Groups
+	http.HandleFunc("/api/get_groups", GetGroups)
 
 	slog.Info("server running on http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {

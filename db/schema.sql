@@ -1,12 +1,20 @@
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     uid INTEGER PRIMARY KEY AUTOINCREMENT,
-    email VARCHAR(128),
-    password VARCHAR(256),
-    location VARCHAR(64)
+    email VARCHAR(128) NOT NULL,
+    password VARCHAR(256) NOT NULL,
+    location VARCHAR(64) NOT NULL
 );
 
-INSERT INTO users (email, password, location)
-VALUES ('admin', 'admin', 'admin');
+DROP TABLE IF EXISTS groups;
+CREATE TABLE groups (
+    gid INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(32) NOT NULL,
+    description TEXT
+);
 
-SELECT * FROM users;
+DROP TABLE IF EXISTS groups_contains;
+CREATE TABLE group_contains(
+    uid INTEGER,
+    gid INTEGER
+);
