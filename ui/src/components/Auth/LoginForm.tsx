@@ -15,7 +15,7 @@ interface FormErrors {
 }
 
 const LoginForm = () => {
-    const { setIsLoggedIn } = useAuth();
+    const { isLoggedIn, setIsLoggedIn } = useAuth();
     const [errors, setErrors] = useState<FormErrors>({});
 
     const [formData, setFormData] = useState<LoginFormData>({
@@ -50,7 +50,7 @@ const LoginForm = () => {
 
         if (validateForm()) {
             try {
-                await fetch("http://127.0.0.1:8080/api/login", {
+                const response = await fetch("http://127.0.0.1:8080/api/login", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -58,16 +58,15 @@ const LoginForm = () => {
                     body: JSON.stringify(formData),
                 });
 
-                // const data = await response.json();
-                //
-                // if (data.account_created) {
-                //     console.log("Registration Successful! Account created successfully");
-                //     setIsLoggedIn(true);
-                //     window.location.reload();
-                // } else {
-                //     console.log("Failed to create account.");
-                //     setIsLoggedIn(false);
-                // }
+                const data = await response.json();
+
+                if (data.account_created) {
+                    console.log("Registration Successful! Account created successfully");
+                    setIsLoggedIn(true);
+                } else {
+                    console.log("Failed to create account.");
+                    setIsLoggedIn(false);
+                }
             } catch (error) {
                 console.error("Error Registering:", error);
                 setErrors({
@@ -80,6 +79,7 @@ const LoginForm = () => {
     return (
         <section>
             <h2>Login</h2>
+            <p>is Logged in? : {isLoggedIn}</p>
             <form onSubmit={handleSubmit} id="login-form">
                 {errors.general && (
                     <p>{errors.general}</p>

@@ -2,6 +2,7 @@ package core
 
 import (
 	"encoding/json"
+	"fmt"
 	"intern-showcase-2025/db"
 	"intern-showcase-2025/utils"
 	"io"
@@ -63,11 +64,15 @@ func signup(w http.ResponseWriter, r *http.Request) {
 
 	// Check if email already exists
 	rows, err := db.Fetch("SELECT uid FROM users WHERE email = ?", email)
-	strRows, err := db.DBRowToStringList(rows)
-	if err != nil || strRows != nil {
-		slog.Error("error creating user", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
-		return
+	var strRows []string
+
+	for rows.Next() {
+		strRows, err = db.DBRowToStringList(rows)
+		if err != nil || strRows != nil {
+			slog.Error("error creating user", "error", err)
+			_ = json.NewEncoder(w).Encode(response)
+			return
+		}
 	}
 
 	// Add user to database
@@ -125,35 +130,55 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.CloseConnection()
 
-	rows, err := db.Fetch("SELECT * FROM users WHERE email = ?", email)
-	if err != nil || rows != nil {
-		slog.Error("error creating user", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	dataset, err := db.DBRowToStringList(rows)
+	// Check if user is in the database
+	rows, err := db.Fetch(
+		"SELECT uid, email, password FROM users WHERE email = ? AND password = ?",
+		email,
+		utils.HashData(password),
+	)
 	if err != nil {
-		slog.Error("error getting dataset", "error", err)
+		slog.Error("user does not exist", "error", err)
 		_ = json.NewEncoder(w).Encode(response)
 		return
 	}
 
-	if dataset[2] == password {
+	var dataset []string
+	for rows.Next() {
+		dataset, err = db.DBRowToStringList(rows)
+		if err != nil {
+			slog.Error("error converting dataset", "error", err)
+			_ = json.NewEncoder(w).Encode(response)
+			return
+		}
+	}
+
+	fmt.Println(password, dataset[2])
+	if len(dataset) == 3 && dataset[2] == utils.HashData(password) {
 		slog.Info("user logged in", "email", email)
 		response["account_created"] = true
 		_ = json.NewEncoder(w).Encode(response)
+	} else {
+		slog.Error("user does not exist")
+		_ = json.NewEncoder(w).Encode(response)
+		return
 	}
 
 	// Update session information
-	user_id := dataset[0]
+	userId := dataset[0]
 	session, err := store.Get(r, "users")
-	session.Values["user_id"] = user_id
+	session.Values["user_id"] = userId
 	session.Values["email"] = email
-	session.Save(r, w)
+	err = session.Save(r, w)
+	if err != nil {
+		slog.Error("error saving session", "error", err)
+		_ = json.NewEncoder(w).Encode(response)
+		return
+	}
 }
 
 func logout(w http.ResponseWriter, r *http.Request) {
+	response := map[string]bool{"account_created": false}
+
 	session, err := store.Get(r, "user-id")
 	if err != nil {
 		slog.Error("error getting session", "error", err)
@@ -161,5 +186,14 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	}
 	session.Values["users"] = make(map[interface{}]interface{})
 	session.Options.MaxAge = -1
-	session.Save(r, w)
+	err = session.Save(r, w)
+	if err != nil {
+		slog.Error("error saving session", "error", err)
+		_ = json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	response["account_created"] = true
+	slog.Info("user logged out")
+	_ = json.NewEncoder(w).Encode(response)
 }
