@@ -1,24 +1,22 @@
 import React, { useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
 
-interface LoginFormData {
-    email: string;
-    password: string;
+interface GroupFormData {
+    name: string;
+    desc: string;
 }
 
 interface FormErrors {
-    email?: string;
-    password?: string;
+    name?: string;
+    desc?: string;
     general?: string;
 }
 
-const LoginForm = () => {
-    const { isLoggedIn, setIsLoggedIn } = useAuth();
+const CreateGroup = () => {
     const [errors, setErrors] = useState<FormErrors>({});
 
-    const [formData, setFormData] = useState<LoginFormData>({
-        email: "",
-        password: "",
+    const [formData, setFormData] = useState<GroupFormData>({
+        name: "",
+        desc: "",
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +32,7 @@ const LoginForm = () => {
 
         // Check for empty fields
         Object.keys(formData).forEach((key) => {
-            if (!formData[key as keyof LoginFormData]) {
+            if (!formData[key as keyof GroupFormData]) {
                 newErrors[key as keyof FormErrors] = "This field is required";
             }
         });
@@ -48,7 +46,7 @@ const LoginForm = () => {
 
         if (validateForm()) {
             try {
-                const response = await fetch("http://127.0.0.1:8080/api/login", {
+                const response = await fetch("http://127.0.0.1:8080/api/create_group", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -58,17 +56,15 @@ const LoginForm = () => {
 
                 const data = await response.json();
 
-                if (data.account_created) {
-                    console.log("Registration Successful! Account created successfully");
-                    setIsLoggedIn(true);
+                if (data.group_created) {
+                    console.log("Group created successfully");
                 } else {
-                    console.log("Failed to create account.");
-                    setIsLoggedIn(false);
+                    console.log("Failed to create group.");
                 }
             } catch (error) {
-                console.error("Error Registering:", error);
+                console.error("Error Creating Group:", error);
                 setErrors({
-                    general: "An error occurred during registration",
+                    general: "An error occurred during creation",
                 });
             }
         }
@@ -76,33 +72,32 @@ const LoginForm = () => {
 
     return (
         <section>
-            <h2>Login</h2>
-            <p>is Logged in? : {isLoggedIn}</p>
-            <form onSubmit={handleSubmit} id="login-form">
+            <h2>Create a Group</h2>
+            <form onSubmit={handleSubmit} id="create-group-form">
                 {errors.general && (
                     <p>{errors.general}</p>
                 )}
 
-                {errors.email && (
-                    <p> {errors.email}</p>
+                {errors.name && (
+                    <p> {errors.name}</p>
                 )}
                 <input
-                    name="email"
-                    type="email"
-                    placeholder="Enter Email"
+                    name="gname"
+                    type="text"
+                    placeholder="Enter Group Name"
                     onChange={handleInputChange}
-                    value={formData.email}
+                    value={formData.name}
                 />
 
-                {errors.password && (
-                    <p>{errors.password}</p>
+                {errors.desc && (
+                    <p>{errors.desc}</p>
                 )}
                 <input
-                    name="password"
-                    type="password"
-                    placeholder="Enter Password"
+                    name="desc"
+                    type="text"
+                    placeholder="Enter Group Description"
                     onChange={handleInputChange}
-                    value={formData.password}
+                    value={formData.desc}
                 />
 
                 <button type="submit">Login</button>
@@ -111,4 +106,4 @@ const LoginForm = () => {
     );
 };
 
-export default LoginForm;
+export default CreateGroup;

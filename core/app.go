@@ -16,6 +16,7 @@ func Run() {
 
 	// Groups
 	http.HandleFunc("/api/get_groups", GetGroups)
+	http.HandleFunc("/api/create_group", CreateGroup)
 
 	slog.Info("server running on http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {

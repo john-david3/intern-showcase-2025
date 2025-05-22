@@ -13,7 +13,7 @@ CREATE TABLE groups (
     description TEXT
 );
 
-DROP TABLE IF EXISTS groups_contains;
+DROP TABLE IF EXISTS group_contains;
 CREATE TABLE group_contains(
     uid INTEGER,
     gid INTEGER
