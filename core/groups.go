@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"intern-showcase-2025/db"
+	"intern-showcase-2025/session"
 	"intern-showcase-2025/utils"
 	"log/slog"
 	"net/http"
@@ -17,7 +18,7 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 
 	// Retrieve the users current session
 	slog.Info("attempting to get groups")
-	session, err := store.Get(r, "session")
+	session, err := session.Store.Get(r, "session")
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error getting session", "group_loaded")
 		return
@@ -128,7 +129,7 @@ func CreateGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Add the user to new group
-	session, err := store.Get(r, "session")
+	session, err := session.Store.Get(r, "session")
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error getting session", "group_created")
 		return

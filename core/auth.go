@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"intern-showcase-2025/db"
+	"intern-showcase-2025/session"
 	"intern-showcase-2025/utils"
 	"log/slog"
 	"net/http"
@@ -145,7 +146,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	// Update session information
 	userId := dataset[0]
-	session, err := store.Get(r, "session")
+	session, err := session.Store.Get(r, "session")
 	session.Values["user_id"] = userId
 	session.Values["email"] = email
 	err = session.Save(r, w)
@@ -159,7 +160,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 func Logout(w http.ResponseWriter, r *http.Request) {
 	response := map[string]bool{"account_created": false}
 
-	session, err := store.Get(r, "session")
+	session, err := session.Store.Get(r, "session")
 	if err != nil {
 		slog.Error("error getting session", "error", err)
 		return

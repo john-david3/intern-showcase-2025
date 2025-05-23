@@ -1,12 +1,9 @@
 package core
 
 import (
-	"github.com/gorilla/sessions"
 	"log/slog"
 	"net/http"
 )
-
-var store = sessions.NewCookieStore([]byte("super-secretive-key"))
 
 func Run() {
 	// Authentication routes
