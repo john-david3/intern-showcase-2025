@@ -174,9 +174,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteLaxMode,
 	}
 	http.SetCookie(w, cookie)
-
-	slog.Info("user logged in", "email", email)
-	_ = json.NewEncoder(w).Encode(map[string]bool{"account_created": true})
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {

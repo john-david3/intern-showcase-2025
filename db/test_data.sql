@@ -18,6 +18,7 @@ VALUES
 SELECT * FROM users;
 SELECT * FROM groups;
 SELECT * FROM group_contains;
+SELECT * FROM session;
 
 SELECT
     g.*
