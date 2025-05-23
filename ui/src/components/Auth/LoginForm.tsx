@@ -59,17 +59,17 @@ const LoginForm = () => {
 
                 const data = await response.json();
 
-                if (data.account_created) {
-                    console.log("Registration Successful! Account created successfully");
+                if (data.logged_in) {
+                    console.log("Login Successful!");
                     setIsLoggedIn(true);
                 } else {
-                    console.log("Failed to create account.");
+                    console.log("Failed to log in.");
                     setIsLoggedIn(false);
                 }
             } catch (error) {
-                console.error("Error Registering:", error);
+                console.error("Error Login:", error);
                 setErrors({
-                    general: "An error occurred during registration",
+                    general: "An error occurred during login",
                 });
             }
         }

@@ -11,11 +11,33 @@ import (
 )
 
 func GetGroups(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+	if r.Method != http.MethodPost {
+		err := http.StatusMethodNotAllowed
+		http.Error(w, "Invalid request method", err)
+		return
+	}
+
+	if err := Authorize(r); err != nil {
+		err := http.StatusUnauthorized
+		http.Error(w, "Unauthorized", err)
+		return
+	}
+
+	body, err := utils.ReadData(r.Body)
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error reading body", "account_created")
+		return
+	}
+
+	data := make(map[string]string)
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error unmarshalling body", "account_created")
+		return
+	}
+
+	username := r.FormValue("username")
+	fmt.Fprintf(w, "CSRF validation successful! Welcome %s", username)
 
 	// Retrieve the users current session
 	slog.Info("attempting to get groups")
@@ -37,7 +59,7 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 	rows, err := db.Fetch(`
 				SELECT g.*
 				FROM users AS u
-				INNER JOIN group_contains AS gc 
+				INNER JOIN group_contains AS gc
 				ON u.uid = gc.uid
 				INNER JOIN groups AS g
 				ON gc.gid = g.gid

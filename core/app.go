@@ -1,22 +1,27 @@
 package core
 
 import (
+	"intern-showcase-2025/utils"
 	"log/slog"
 	"net/http"
 )
 
 func Run() {
+	mux := http.NewServeMux()
+
 	// Authentication routes
-	http.HandleFunc("/api/signup", Signup)
-	http.HandleFunc("/api/login", Login)
-	http.HandleFunc("/api/logout", Logout)
+	mux.HandleFunc("/api/signup", Signup)
+	mux.HandleFunc("/api/login", Login)
+	//mux.HandleFunc("/api/logout", Logout)
 
 	// Groups
-	http.HandleFunc("/api/get_groups", GetGroups)
-	http.HandleFunc("/api/create_group", CreateGroup)
+	mux.HandleFunc("/api/get_groups", GetGroups)
+	//mux.HandleFunc("/api/create_group", CreateGroup)
+
+	handlerWithMiddleware := utils.CORSMiddleware(mux)
 
 	slog.Info("server running on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(":8080", handlerWithMiddleware); err != nil {
 		slog.Error("internal server error: ", "error", err)
 	}
 }

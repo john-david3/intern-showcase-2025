@@ -3,179 +3,141 @@ package core
 import (
 	"encoding/json"
 	"fmt"
-	"intern-showcase-2025/db"
-	"intern-showcase-2025/session"
 	"intern-showcase-2025/utils"
-	"log/slog"
 	"net/http"
 	"time"
 )
 
-func Signup(w http.ResponseWriter, r *http.Request) {
-	// Set up a writer
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+type LoginInfo struct {
+	HashedPassword string
+	SessionToken   string
+	CSRFToken      string
+}
 
-	// Read form data from frontend
+var users = map[string]LoginInfo{}
+
+func Signup(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		err := http.StatusMethodNotAllowed
+		http.Error(w, "Invalid method", err)
+		return
+	}
+
 	body, err := utils.ReadData(r.Body)
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error reading body", "account_created")
 		return
 	}
 
-	// Unmarshall the data
-	signupData := make(map[string]string)
-	err = json.Unmarshal(body, &signupData)
+	data := make(map[string]string)
+	err = json.Unmarshal(body, &data)
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error unmarshalling body", "account_created")
 		return
 	}
 
-	// Collect & check the data
-	email := utils.Sanitise(signupData["email"])
-	password := utils.HashData(utils.Sanitise(signupData["password"]))
-	password2 := utils.HashData(utils.Sanitise(signupData["password2"]))
-	location := utils.Sanitise(signupData["location"])
+	email := data["email"]
+	password := data["password"]
 
-	if password != password2 {
-		utils.SendErrorResponse(w, err, "passwords do not match", "account_created")
+	if _, ok := users[email]; ok {
+		err := http.StatusConflict
+		http.Error(w, "Username already taken", err)
 		return
 	}
 
-	// Add user to the database
-	err = db.CreateConnection()
-	if err != nil {
-		utils.SendErrorResponse(w, err, "error creating connection", "account_created")
-		return
-	}
-	defer db.CloseConnection()
-
-	// Check if email already exists
-	rows, err := db.Fetch("SELECT uid FROM users WHERE email = ?", email)
-	var strRows []string
-
-	for rows.Next() {
-		strRows, err = db.DBRowToStringList(rows)
-		if err != nil || strRows != nil {
-			utils.SendErrorResponse(w, err, "error fetching rows", "account_created")
-			return
-		}
+	hashedPassword, _ := utils.HashData(password)
+	users[email] = LoginInfo{
+		HashedPassword: hashedPassword,
 	}
 
-	// Add user to database
-	if email != "" && password != "" && location != "" && password2 != "" {
-		err = db.Execute("INSERT INTO users (email, password, location) VALUES (?, ?, ?)", email, password, location)
-		if err != nil {
-			utils.SendErrorResponse(w, err, "error inserting user", "account_created")
-			return
-		}
-	}
-
-	// Successful Creation
-	slog.Info("user created", "email", email)
-	_ = json.NewEncoder(w).Encode(map[string]bool{"account_created": true})
+	fmt.Println("User registered with email: ", email)
+	response := map[string]string{"account_created": "true"}
+	_ = json.NewEncoder(w).Encode(response)
 
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	// Set up a writer
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-	response := map[string]bool{"account_created": false}
+	if r.Method != http.MethodPost {
+		err := http.StatusMethodNotAllowed
+		http.Error(w, "Invalid method", err)
+		return
+	}
 
-	// Read form data from frontend
 	body, err := utils.ReadData(r.Body)
 	if err != nil {
-		utils.SendErrorResponse(w, err, "error reading body", "account_created")
+		utils.SendErrorResponse(w, err, "error reading body", "logged_in")
 		return
 	}
 
-	// Unmarshall the data
-	loginData := make(map[string]string)
-	err = json.Unmarshal(body, &loginData)
+	data := make(map[string]string)
+	err = json.Unmarshal(body, &data)
 	if err != nil {
-		utils.SendErrorResponse(w, err, "error unmarshalling body", "account_created")
+		utils.SendErrorResponse(w, err, "error unmarshalling body", "logged_in")
 		return
 	}
 
-	// Collect & check the data
-	email := utils.Sanitise(loginData["email"])
-	password := utils.Sanitise(loginData["password"])
+	email := data["email"]
+	password := data["password"]
 
-	// Create connection to the database
-	err = db.CreateConnection()
-	if err != nil {
-		utils.SendErrorResponse(w, err, "error creating connection", "account_created")
-		return
-	}
-	defer db.CloseConnection()
-
-	// Check if user is in the database
-	rows, err := db.Fetch(
-		"SELECT uid, email, password FROM users WHERE email = ? AND password = ?",
-		email,
-		utils.HashData(password),
-	)
-	if err != nil {
-		utils.SendErrorResponse(w, err, "user does not exist", "account_created")
+	user, ok := users[email]
+	if !ok || !utils.CheckPasswordHash(password, user.HashedPassword) {
+		err := http.StatusUnauthorized
+		http.Error(w, "Invalid username or password", err)
 		return
 	}
 
-	// Add the user to the data if not exists
-	var dataset []string
-	for rows.Next() {
-		dataset, err = db.DBRowToStringList(rows)
-		if err != nil {
-			utils.SendErrorResponse(w, err, "error converting dataset", "account_created")
-			return
-		}
-	}
+	sessionToken := utils.GenerateToken(32)
+	csrfToken := utils.GenerateToken(32)
 
-	fmt.Println(password, dataset[2])
-	if len(dataset) == 3 && dataset[2] == utils.HashData(password) {
-		slog.Info("user logged in", "email", email)
-		response["account_created"] = true
-		_ = json.NewEncoder(w).Encode(response)
-	} else {
-		utils.SendErrorResponse(w, err, "user does not exist", "account_created")
-		return
-	}
-
-	// Update session information
-	userId := dataset[0]
-	sessionId, err := session.GenerateSession()
-	if err != nil {
-		utils.SendErrorResponse(w, err, "error generating session id", "account_created")
-		return
-	}
-	expiry := time.Now().Add(24 * time.Hour)
-
-	err = db.Execute("INSERT INTO session(sid, uid, expires) VALUES (?, ?, ?);",
-		sessionId, userId, expiry)
-
-	if err != nil {
-		utils.SendErrorResponse(w, err, "error inserting session", "account_created")
-		return
-	}
-
-	cookie := &http.Cookie{
-		Name:     "session_id",
-		Value:    sessionId,
-		Path:     "/",
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_token",
+		Value:    sessionToken,
+		Expires:  time.Now().Add(24 * time.Hour),
 		HttpOnly: true,
-		Secure:   false,
-		Expires:  expiry,
-		SameSite: http.SameSiteLaxMode,
-	}
-	http.SetCookie(w, cookie)
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "csrf_token",
+		Value:    csrfToken,
+		Expires:  time.Now().Add(24 * time.Hour),
+		HttpOnly: false,
+	})
+
+	user.SessionToken = sessionToken
+	user.CSRFToken = csrfToken
+	users[email] = user
+
+	fmt.Println("User logged in with username: ", users[email])
+	response := map[string]string{"logged_in": "true"}
+	_ = json.NewEncoder(w).Encode(response)
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
+	if err := Authorize(r); err != nil {
+		err := http.StatusUnauthorized
+		http.Error(w, "Unauthorized", err)
+		return
+	}
 
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_token",
+		Value:    "",
+		Expires:  time.Now().Add(-time.Hour),
+		HttpOnly: true,
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "csrf_token",
+		Value:    "",
+		Expires:  time.Now().Add(-time.Hour),
+		HttpOnly: false,
+	})
+
+	username := r.FormValue("username")
+	user, _ := users[username]
+	user.SessionToken = ""
+	user.CSRFToken = ""
+	users[username] = user
+
+	fmt.Fprintln(w, "Logout successful")
 }
