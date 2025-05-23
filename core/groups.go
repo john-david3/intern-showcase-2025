@@ -19,12 +19,12 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 
 	// Retrieve the users current session
 	slog.Info("attempting to get groups")
-	session, err := session.Store.Get(r, "session")
+	userId, err := session.GetSession(r)
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error getting session", "group_loaded")
 		return
 	}
-	fmt.Println(session.Values)
+	fmt.Println(userId)
 
 	// Retrieve the users groups
 	err = db.CreateConnection()
@@ -34,8 +34,6 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.CloseConnection()
 
-	userId := session.Values["user_id"]
-	fmt.Println(userId)
 	rows, err := db.Fetch(`
 				SELECT g.*
 				FROM users AS u
@@ -131,13 +129,13 @@ func CreateGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Add the user to new group
-	session, err := session.Store.Get(r, "session")
+	userId, err := session.GetSession(r)
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error getting session", "group_created")
 		return
 	}
 
-	err = db.Execute("INSERT INTO group_contains(uid, gid) VALUES(?, ?);", session.Values["user_id"], groups[0])
+	err = db.Execute("INSERT INTO group_contains(uid, gid) VALUES(?, ?);", userId, groups[0])
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error creating adding user to group", "group_created")
 		return

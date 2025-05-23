@@ -8,6 +8,7 @@ import (
 	"intern-showcase-2025/utils"
 	"log/slog"
 	"net/http"
+	"time"
 )
 
 func Signup(w http.ResponseWriter, r *http.Request) {
@@ -148,34 +149,36 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	// Update session information
 	userId := dataset[0]
-	session, err := session.Store.Get(r, "session")
-	session.Values["user_id"] = userId
-	session.Values["email"] = email
-	err = session.Save(r, w)
+	sessionId, err := session.GenerateSession()
 	if err != nil {
-		slog.Error("error saving session", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
+		utils.SendErrorResponse(w, err, "error generating session id", "account_created")
 		return
 	}
+	expiry := time.Now().Add(24 * time.Hour)
+
+	err = db.Execute("INSERT INTO session(sid, uid, expires) VALUES (?, ?, ?);",
+		sessionId, userId, expiry)
+
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error inserting session", "account_created")
+		return
+	}
+
+	cookie := &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionId,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   false,
+		Expires:  expiry,
+		SameSite: http.SameSiteLaxMode,
+	}
+	http.SetCookie(w, cookie)
+
+	slog.Info("user logged in", "email", email)
+	_ = json.NewEncoder(w).Encode(map[string]bool{"account_created": true})
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	response := map[string]bool{"account_created": false}
 
-	session, err := session.Store.Get(r, "session")
-	if err != nil {
-		slog.Error("error getting session", "error", err)
-		return
-	}
-	session.Options.MaxAge = -1
-	err = session.Save(r, w)
-	if err != nil {
-		slog.Error("error saving session", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	response["account_created"] = true
-	slog.Info("user logged out")
-	_ = json.NewEncoder(w).Encode(response)
 }

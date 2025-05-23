@@ -18,3 +18,11 @@ CREATE TABLE group_contains(
     uid INTEGER,
     gid INTEGER
 );
+
+DROP TABLE IF EXISTS session;
+CREATE TABLE session (
+    sid VARCHAR(64) PRIMARY KEY,
+    uid,
+    data TEXT,
+    expires DATETIME
+);
