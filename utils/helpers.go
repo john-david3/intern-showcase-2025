@@ -9,7 +9,7 @@ import (
 
 func SendErrorResponse(w http.ResponseWriter, err error, message string, responseKey string) {
 	slog.Error(message, "error", err)
-	response := map[string]bool{"account_created": false}
+	response := map[string]bool{responseKey: false}
 	_ = json.NewEncoder(w).Encode(response)
 }
 

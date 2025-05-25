@@ -14,42 +14,19 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		err := http.StatusMethodNotAllowed
 		http.Error(w, "Invalid request method", err)
-		return
+		return 
 	}
-
-	if err := Authorize(r); err != nil {
-		err := http.StatusUnauthorized
-		http.Error(w, "Unauthorized", err)
-		return
-	}
-
-	body, err := utils.ReadData(r.Body)
-	if err != nil {
-		utils.SendErrorResponse(w, err, "error reading body", "account_created")
-		return
-	}
-
-	data := make(map[string]string)
-	err = json.Unmarshal(body, &data)
-	if err != nil {
-		utils.SendErrorResponse(w, err, "error unmarshalling body", "account_created")
-		return
-	}
-
-	username := r.FormValue("username")
-	fmt.Fprintf(w, "CSRF validation successful! Welcome %s", username)
 
 	// Retrieve the users current session
 	slog.Info("attempting to get groups")
-	userId, err := session.GetSession(r)
-	if err != nil {
-		utils.SendErrorResponse(w, err, "error getting session", "group_loaded")
+	userId := r.Header.Get("X-User-ID")
+	if userId == "" {
+		utils.SendErrorResponse(w, fmt.Errorf("missing user_id"), "missing user ID from header", "group_loaded")
 		return
 	}
-	fmt.Println(userId)
 
 	// Retrieve the users groups
-	err = db.CreateConnection()
+	err := db.CreateConnection()
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error creating connection", "group_loaded")
 		return

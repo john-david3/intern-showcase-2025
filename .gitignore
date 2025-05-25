@@ -1,1 +1,3 @@
 identifier.sqlite
+/flask_session
+ui/node_modules

@@ -1,0 +1,96 @@
+from flask import Flask, session, request, jsonify
+from flask_session import Session
+from flask_cors import CORS
+import requests
+
+app = Flask(__name__)
+app.config["SECRET_KEY"]
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if not request.get_json():
+        return jsonify({"message": "Expected JSON data"}), 400
+    
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+    password2 = data.get("password2")
+    location = data.get("location")
+
+    send_data = {
+        "email": email,
+        "password": password,
+        "password2": password2,
+        "location": location
+        }
+
+    try:
+        res = requests.post("http://localhost:8080/api/signup", data=send_data)
+        return jsonify({"account_created": True})
+    except Exception:
+        return jsonify({"account_created": False})
+    
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if not request.get_json():
+        return jsonify({"message": "Expected JSON data"}), 400
+    
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+
+    send_data = {
+        "email": email,
+        "password": password,
+    }
+
+    try:
+        res = requests.post("http://localhost:8080/api/login", data=send_data)
+        res.raise_for_status()
+        res_json = res.json()
+
+        user_id = res_json.get("user_id")
+        if user_id:
+            session["user_id"] = user_id
+            print("Successfully added session key", session["user_id"])
+            return jsonify({"logged_in": True})
+        else:
+            print("could get session")
+            return jsonify({"logged_in": False})
+        
+    except Exception:
+        print("exception in login")
+        return jsonify({"logged_in": False})
+    
+@app.route("/get_groups", methods=["GET", "POST"])
+def get_groups():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user not logged in"}), 401
+    
+    headers = {
+        "X-User-ID": str(user_id),
+    }
+
+    try:
+        res = requests.post("http://localhost:8080/api/get_groups", headers=headers)
+        res.raise_for_status
+        data = res.json()
+        return jsonify(data)
+    except Exception:
+        print("|BOO|", flush=True)
+        return jsonify({"error": "failed to get groups"})
+    
+
+
+@app.route("/session_status", methods=["GET"])
+def session_status():
+    user_id = session.get("user_id")
+    if user_id:
+        return jsonify({"logged_in": True, "user_id": user_id})
+    else:
+        return jsonify({"logged_in": False})

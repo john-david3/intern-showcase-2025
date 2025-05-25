@@ -1,11 +1,11 @@
 package core
 
 import (
-	"encoding/json"
 	"fmt"
 	"intern-showcase-2025/utils"
 	"net/http"
 	"time"
+	"encoding/json"
 )
 
 type LoginInfo struct {
@@ -23,21 +23,10 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body, err := utils.ReadData(r.Body)
-	if err != nil {
-		utils.SendErrorResponse(w, err, "error reading body", "account_created")
-		return
-	}
-
-	data := make(map[string]string)
-	err = json.Unmarshal(body, &data)
-	if err != nil {
-		utils.SendErrorResponse(w, err, "error unmarshalling body", "account_created")
-		return
-	}
-
-	email := data["email"]
-	password := data["password"]
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+	// password2 := r.FormValue("password2")
+	// location := r.FormValue("location")
 
 	if _, ok := users[email]; ok {
 		err := http.StatusConflict
@@ -51,8 +40,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println("User registered with email: ", email)
-	response := map[string]string{"account_created": "true"}
-	_ = json.NewEncoder(w).Encode(response)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"message": "Signup Successful"}`))
 
 }
 
@@ -63,21 +52,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body, err := utils.ReadData(r.Body)
-	if err != nil {
-		utils.SendErrorResponse(w, err, "error reading body", "logged_in")
-		return
-	}
-
-	data := make(map[string]string)
-	err = json.Unmarshal(body, &data)
-	if err != nil {
-		utils.SendErrorResponse(w, err, "error unmarshalling body", "logged_in")
-		return
-	}
-
-	email := data["email"]
-	password := data["password"]
+	email := r.FormValue("email")
+	password := r.FormValue("password")
 
 	user, ok := users[email]
 	if !ok || !utils.CheckPasswordHash(password, user.HashedPassword) {
@@ -86,30 +62,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessionToken := utils.GenerateToken(32)
-	csrfToken := utils.GenerateToken(32)
-
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session_token",
-		Value:    sessionToken,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: true,
-	})
-
-	http.SetCookie(w, &http.Cookie{
-		Name:     "csrf_token",
-		Value:    csrfToken,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: false,
-	})
-
-	user.SessionToken = sessionToken
-	user.CSRFToken = csrfToken
 	users[email] = user
 
-	fmt.Println("User logged in with username: ", users[email])
-	response := map[string]string{"logged_in": "true"}
-	_ = json.NewEncoder(w).Encode(response)
+	fmt.Println("User logged in with username: ", email)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message": "Login Successful",
+		"user_id": 2,
+	})
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {

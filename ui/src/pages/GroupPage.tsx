@@ -1,33 +1,28 @@
 import {useEffect} from "react";
-import {useAuth} from "../contexts/AuthContext.tsx";
+import AuthCheck from "../components/Auth/AuthCheck";
 
 
 const GroupPage = () => {
-    const { isLoggedIn } = useAuth();
+
+    <AuthCheck />
 
     useEffect(() => {
         const fetchUserGroups = async () => {
             try {
-                const response = await fetch("http://127.0.0.1:8080/api/get_groups", {
+                const response = await fetch("http://localhost:5000/get_groups", {
                     credentials: "include"
                 });
-                if (!response.ok){
-                    throw new Error("Failed to fetch groups");
-                }
+                if (!response.ok) throw new Error("Failed to fetch groups");
                 const data = await response.json();
                 console.log(data);
-                // TODO: format this data nicely on the frontend
-
             } catch (error) {
                 console.error("Error fetching groups: ", error);
             }
-        }
+        };
 
-        if (isLoggedIn){
-            fetchUserGroups()
-        }
+        fetchUserGroups();  // Always try
+    }, []);
 
-    }, [isLoggedIn]);
 
 
     return (
