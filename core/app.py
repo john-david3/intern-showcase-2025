@@ -50,7 +50,6 @@ def login():
 
     try:
         res = requests.post("http://localhost:8080/api/login", data=send_data)
-        res.raise_for_status()
         res_json = res.json()
 
         user_id = res_json.get("user_id")
@@ -78,11 +77,10 @@ def get_groups():
 
     try:
         res = requests.post("http://localhost:8080/api/get_groups", headers=headers)
-        res.raise_for_status
         data = res.json()
         return jsonify(data)
     except Exception:
-        print("|BOO|", flush=True)
+        print("Failed to get groups", flush=True)
         return jsonify({"error": "failed to get groups"})
     
 

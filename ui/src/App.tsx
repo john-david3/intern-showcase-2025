@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import SignupForm from "./components/Auth/SignupForm.tsx"
 import LoginForm from "./components/Auth/LoginForm.tsx"
 import GroupPage from "./pages/GroupPage.tsx"
-import AuthCheck from './components/Auth/AuthCheck.tsx'
 
 function App() {
   return (

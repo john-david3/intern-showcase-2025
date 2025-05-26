@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"encoding/json"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -9,8 +9,9 @@ import (
 
 func SendErrorResponse(w http.ResponseWriter, err error, message string, responseKey string) {
 	slog.Error(message, "error", err)
-	response := map[string]bool{responseKey: false}
-	_ = json.NewEncoder(w).Encode(response)
+	response := fmt.Sprintf(`{"message": "%s"}`, responseKey)
+	w.WriteHeader(http.StatusInternalServerError)
+	w.Write([]byte(response))
 }
 
 func ReadData(body io.Reader) ([]byte, error) {

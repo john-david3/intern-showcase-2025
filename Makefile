@@ -21,3 +21,7 @@ dev:
 serve:
 	@echo "Running flask server"
 	@flask run
+
+install-deps:
+	@pip3 install -r requirements.txt
+	@npm install react-router-dom
