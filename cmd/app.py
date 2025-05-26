@@ -10,6 +10,8 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
 
+
+# AUTHENTICATION ROUTES
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if not request.get_json():
@@ -26,7 +28,7 @@ def signup():
         "password": password,
         "password2": password2,
         "location": location
-        }
+    }
 
     try:
         _ = requests.post("http://localhost:8080/api/signup", data=send_data)
@@ -64,7 +66,13 @@ def login():
     except Exception:
         print("exception in login")
         return jsonify({"logged_in": False})
-    
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return jsonify({"logged_in": False})
+
+# GROUP ROUTES
 @app.route("/get_groups", methods=["GET", "POST"])
 def get_groups():
     user_id = session.get("user_id")
@@ -113,7 +121,33 @@ def create_group():
         print("failed to create group", flush=True)
         return jsonify({"error": "failed to get groups"})
 
+@app.route("/join_group", methods=["GET", "POST"])
+def join_group():
+    if not request.get_json():
+        return jsonify({"message": "Expected JSON data"}), 400
 
+    data = request.get_json()
+    code = data.get("code")
+    user_id = session.get("user_id")
+
+    send_data = {
+        "code": code
+    }
+
+    headers = {
+        "X-User-ID": str(user_id),
+    }
+
+    try:
+        res = requests.post("http://localhost:8080/api/join_group", headers=headers, data=send_data)
+        data = res.json()
+        return jsonify(data)
+    except Exception:
+        print("Failed to join group")
+        return jsonify({"error": "failed to join group"})
+
+
+# SESSION ROUTES
 @app.route("/session_status", methods=["GET"])
 def session_status():
     user_id = session.get("user_id")

@@ -16,7 +16,7 @@ func SendErrorResponse(w http.ResponseWriter, err error, message string, respons
 	w.Write([]byte(response))
 }
 
-func GenerateCode() (string, error) {
+func GenerateCode(close bool) (string, error) {
 	low := 10000000
 	high := 99999999
 	var code string
@@ -27,7 +27,9 @@ func GenerateCode() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer db.CloseConnection()
+	if close {
+		defer db.CloseConnection()
+	}
 
 	for codeNotExist == false {
 		code = strconv.Itoa(rand.Intn(high - low))
@@ -53,4 +55,14 @@ func GenerateCode() (string, error) {
 
 	return code, nil
 
+}
+
+func CheckMethod(r *http.Request, w http.ResponseWriter, method string) bool {
+	if r.Method != method {
+		err := http.StatusMethodNotAllowed
+		http.Error(w, "Invalid method", err)
+		return false
+	}
+
+	return true
 }
