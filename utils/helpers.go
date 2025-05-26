@@ -3,7 +3,6 @@ package utils
 import (
 	"fmt"
 	"intern-showcase-2025/db"
-	"io"
 	"log/slog"
 	"math/rand"
 	"net/http"
@@ -15,14 +14,6 @@ func SendErrorResponse(w http.ResponseWriter, err error, message string, respons
 	response := fmt.Sprintf(`{"message": "%s"}`, responseKey)
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write([]byte(response))
-}
-
-func ReadData(body io.Reader) ([]byte, error) {
-	res, err := io.ReadAll(body)
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
 }
 
 func GenerateCode() (string, error) {

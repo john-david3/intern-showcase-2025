@@ -33,4 +33,4 @@ INNER JOIN
 ON
     gc.gid = g.gid
 WHERE
-    u.uid = 2;
+    u.uid = 1;

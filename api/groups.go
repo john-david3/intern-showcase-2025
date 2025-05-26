@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"intern-showcase-2025/db"
 	"intern-showcase-2025/utils"
@@ -32,7 +33,7 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 	defer db.CloseConnection()
 
 	rows, err := db.Fetch(`
-				SELECT g.*
+				SELECT g.name, g.description
 				FROM users AS u
 				INNER JOIN group_contains AS gc
 				ON u.uid = gc.uid
@@ -46,18 +47,26 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var groups []string
+	var groups [][]string
 	for rows.Next() {
-		groups, err = db.DBRowToStringList(rows)
+		group, err := db.DBRowToStringList(rows)
 		if err != nil {
 			utils.SendErrorResponse(w, err, "error getting user group", "group_loaded")
 			return
 		}
+		groups = append(groups, group)
 	}
 	fmt.Println(groups)
 
 	// Send the results to the frontend to be displayed
+	groupMap := make(map[string]string)
+	for _, group := range groups {
+		groupMap[group[0]] = group[1]
+	}
 
+	jsonMap, err := json.Marshal(groupMap)
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonMap)
 }
 
 func CreateGroup(w http.ResponseWriter, r *http.Request) {
