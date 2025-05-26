@@ -100,7 +100,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("User logged in with username: ", email)
 	userId, _ := strconv.Atoi(data[0])
 	res := fmt.Sprintf(`{"message": "Login Successful", "user_id": %d}`, userId)
-	//w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(res))
 }
 

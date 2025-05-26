@@ -16,7 +16,7 @@ func Run() {
 
 	// Groups
 	mux.HandleFunc("/api/get_groups", GetGroups)
-	//mux.HandleFunc("/api/create_group", CreateGroup)
+	mux.HandleFunc("/api/create_group", CreateGroup)
 
 	handlerWithMiddleware := utils.CORSMiddleware(mux)
 

@@ -29,7 +29,7 @@ def signup():
         }
 
     try:
-        res = requests.post("http://localhost:8080/api/signup", data=send_data)
+        _ = requests.post("http://localhost:8080/api/signup", data=send_data)
         return jsonify({"account_created": True})
     except Exception:
         return jsonify({"account_created": False})
@@ -82,7 +82,36 @@ def get_groups():
     except Exception:
         print("Failed to get groups", flush=True)
         return jsonify({"error": "failed to get groups"})
-    
+
+@app.route("/create_group", methods=["GET", "POST"])
+def create_group():
+    if not request.get_json():
+        return jsonify({"message": "Expected JSON data"}), 400
+
+    data = request.get_json()
+    name = data.get("name")
+    desc = data.get("desc")
+
+    send_data = {
+        "name": name,
+        "desc": desc,
+    }
+
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user not logged in"}), 401
+
+    headers = {
+        "X-User-ID": str(user_id),
+    }
+
+    try:
+        res = requests.post("http://localhost:8080/api/create_group", headers=headers, data=send_data)
+        data = res.json()
+        return jsonify(data)
+    except Exception:
+        print("failed to create group", flush=True)
+        return jsonify({"error": "failed to get groups"})
 
 
 @app.route("/session_status", methods=["GET"])

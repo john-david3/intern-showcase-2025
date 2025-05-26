@@ -1,10 +1,8 @@
 package core
 
 import (
-	"encoding/json"
 	"fmt"
 	"intern-showcase-2025/db"
-	"intern-showcase-2025/session"
 	"intern-showcase-2025/utils"
 	"log/slog"
 	"net/http"
@@ -14,7 +12,7 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		err := http.StatusMethodNotAllowed
 		http.Error(w, "Invalid request method", err)
-		return 
+		return
 	}
 
 	// Retrieve the users current session
@@ -63,34 +61,27 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreateGroup(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+	if r.Method != http.MethodPost {
+		err := http.StatusMethodNotAllowed
+		http.Error(w, "Invalid method", err)
+		return
+	}
 
 	// In: name of group, optional description
 	slog.Info("attempting to create group")
-	body, err := utils.ReadData(r.Body)
-	if err != nil {
-		utils.SendErrorResponse(w, err, "error reading from frontend", "group_created")
-		return
-	}
-
-	// Unmarshall the data
-	groupData := make(map[string]string)
-	err = json.Unmarshal(body, &groupData)
-	if err != nil {
-		utils.SendErrorResponse(w, err, "error unmarshalling json", "group_created")
-		return
-	}
 
 	// Collect & check the data
-	name := utils.Sanitise(groupData["name"])
-	desc := utils.Sanitise(groupData["desc"])
+	name := r.FormValue("name")
+	desc := r.FormValue("desc")
+
+	userId := r.Header.Get("X-User-ID")
+	if userId == "" {
+		utils.SendErrorResponse(w, fmt.Errorf("missing user_id"), "missing user ID from header", "group_loaded")
+		return
+	}
 
 	// Create a connection to the database
-	err = db.CreateConnection()
+	err := db.CreateConnection()
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error creating connection", "group_created")
 		return
@@ -104,19 +95,18 @@ func CreateGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Try to create the new group
 	var groups []string
 	for rows.Next() {
 		groups, err = db.DBRowToStringList(rows)
-		if err != nil {
+		if err != nil || len(groups) == 0 {
 			utils.SendErrorResponse(w, err, "error converting groups", "group_created")
 			return
 		}
 	}
 
-	if groups != nil {
-		slog.Info("group already exists")
-		_ = json.NewEncoder(w).Encode(map[string]bool{"group_created": false})
+	fmt.Println(groups)
+	if len(groups) > 0 {
+		utils.SendErrorResponse(w, fmt.Errorf("group already exists found"), "no groups found", "group_created")
 		return
 	}
 
@@ -127,11 +117,18 @@ func CreateGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Add the user to new group
-	userId, err := session.GetSession(r)
+	rows, err = db.Fetch("SELECT gid FROM groups WHERE name = ?;", name)
 	if err != nil {
-		utils.SendErrorResponse(w, err, "error getting session", "group_created")
+		utils.SendErrorResponse(w, err, "error getting group", "group_created")
 		return
+	}
+
+	for rows.Next() {
+		groups, err = db.DBRowToStringList(rows)
+		if err != nil || len(groups) == 0 {
+			utils.SendErrorResponse(w, err, "error converting groups", "group_created")
+			return
+		}
 	}
 
 	err = db.Execute("INSERT INTO group_contains(uid, gid) VALUES(?, ?);", userId, groups[0])
@@ -140,7 +137,8 @@ func CreateGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	res := `{"message": "Group created"}`
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(res))
 	slog.Info("group created")
-	_ = json.NewEncoder(w).Encode(map[string]bool{"group_created": true})
-
 }

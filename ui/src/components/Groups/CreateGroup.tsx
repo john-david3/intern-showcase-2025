@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AuthCheck from "../Auth/AuthCheck.tsx";
 
 interface GroupFormData {
     name: string;
@@ -12,6 +13,9 @@ interface FormErrors {
 }
 
 const CreateGroup = () => {
+
+    <AuthCheck />
+
     const [errors, setErrors] = useState<FormErrors>({});
 
     const [formData, setFormData] = useState<GroupFormData>({
@@ -83,7 +87,7 @@ const CreateGroup = () => {
                     <p> {errors.name}</p>
                 )}
                 <input
-                    name="gname"
+                    name="name"
                     type="text"
                     placeholder="Enter Group Name"
                     onChange={handleInputChange}
@@ -101,7 +105,7 @@ const CreateGroup = () => {
                     value={formData.desc}
                 />
 
-                <button type="submit">Login</button>
+                <button type="submit">Create Group</button>
             </form>
         </section>
     );
