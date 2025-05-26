@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"intern-showcase-2025/db"
 	"intern-showcase-2025/utils"
@@ -9,11 +10,7 @@ import (
 )
 
 func GetGroups(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		err := http.StatusMethodNotAllowed
-		http.Error(w, "Invalid request method", err)
-		return
-	}
+	utils.CheckMethod(r, w, http.MethodPost)
 
 	// Retrieve the users current session
 	slog.Info("attempting to get groups")
@@ -32,7 +29,7 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 	defer db.CloseConnection()
 
 	rows, err := db.Fetch(`
-				SELECT g.*
+				SELECT g.name, g.description
 				FROM users AS u
 				INNER JOIN group_contains AS gc
 				ON u.uid = gc.uid
@@ -41,31 +38,37 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 				WHERE u.uid = ?;`,
 		userId,
 	)
+	defer rows.Close()
+
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error getting user", "group_loaded")
 		return
 	}
 
-	var groups []string
+	var groups [][]string
 	for rows.Next() {
-		groups, err = db.DBRowToStringList(rows)
+		group, err := db.DBRowToStringList(rows)
 		if err != nil {
 			utils.SendErrorResponse(w, err, "error getting user group", "group_loaded")
 			return
 		}
+		groups = append(groups, group)
 	}
 	fmt.Println(groups)
 
 	// Send the results to the frontend to be displayed
+	groupMap := make(map[string]string)
+	for _, group := range groups {
+		groupMap[group[0]] = group[1]
+	}
 
+	jsonMap, err := json.Marshal(groupMap)
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonMap)
 }
 
 func CreateGroup(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		err := http.StatusMethodNotAllowed
-		http.Error(w, "Invalid method", err)
-		return
-	}
+	utils.CheckMethod(r, w, http.MethodPost)
 
 	// In: name of group, optional description
 	slog.Info("attempting to create group")
@@ -110,8 +113,15 @@ func CreateGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Generate a unique 8 digit code
+	code, err := utils.GenerateCode(false)
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error generating code", "group_created")
+		return
+	}
+
 	// Create the new group
-	err = db.Execute("INSERT INTO groups(name, description) VALUES(?, ?);", name, desc)
+	err = db.Execute("INSERT INTO groups(name, description, code) VALUES(?, ?, ?);", name, desc, code)
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error creating group", "group_created")
 		return
@@ -137,8 +147,78 @@ func CreateGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := `{"message": "Group created"}`
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(res))
+	w.Write([]byte(`{"group_created": "true"}`))
 	slog.Info("group created")
+}
+
+func JoinGroup(w http.ResponseWriter, r *http.Request) {
+	utils.CheckMethod(r, w, http.MethodPost)
+
+	slog.Info("attempting to join group")
+	code := r.FormValue("code")
+	userId := r.Header.Get("X-User-ID")
+
+	// Check group exists
+	err := db.CreateConnection()
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error creating connection", "joined_group")
+		return
+	}
+	defer db.CloseConnection()
+
+	rows, err := db.Fetch("SELECT gid FROM groups WHERE code = ?;", code)
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error getting group", "joined_group")
+		return
+	}
+
+	var groups [][]string
+	for rows.Next() {
+		group, err := db.DBRowToStringList(rows)
+		if err != nil {
+			utils.SendErrorResponse(w, err, "error converting groups", "joined_group")
+			return
+		}
+		groups = append(groups, group)
+	}
+
+	if len(groups) != 1 {
+		utils.SendErrorResponse(w, fmt.Errorf("group not found"), "none or too many groups found", "joined_group")
+		return
+	}
+
+	// Check is user is already in the group
+	rows, err = db.Fetch("SELECT gid FROM group_contains WHERE uid = ? AND gid = ?;", userId, groups[0][0])
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error getting group", "joined_group")
+		return
+	}
+
+	var isExist [][]string
+	for rows.Next() {
+		ok, err := db.DBRowToStringList(rows)
+		if err != nil {
+			utils.SendErrorResponse(w, err, "error converting groups", "joined_group")
+			return
+		}
+		isExist = append(isExist, ok)
+	}
+
+	if len(isExist) > 0 {
+		utils.SendErrorResponse(w, fmt.Errorf("user in group"), "user already in group", "joined_group")
+		return
+	}
+
+	// Add the user to the group
+	err = db.Execute(`INSERT INTO group_contains(uid, gid) VALUES(?, ?);`, userId, groups[0][0])
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error joining group", "joined_group")
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"joined_group": "true"}`))
+	slog.Info("group joined", "group", groups[0][0])
+
 }

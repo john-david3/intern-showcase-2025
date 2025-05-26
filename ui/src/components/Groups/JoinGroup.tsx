@@ -1,26 +1,23 @@
 import React, { useState } from "react";
 import AuthCheck from "../Auth/AuthCheck.tsx";
 
-interface GroupFormData {
-    name: string;
-    desc: string;
+interface JoinFormData {
+    code: string;
 }
 
 interface FormErrors {
-    name?: string;
-    desc?: string;
+    code?: string;
     general?: string;
 }
 
-const CreateGroup = () => {
+const JoinGroup = () => {
 
     <AuthCheck />
 
     const [errors, setErrors] = useState<FormErrors>({});
 
-    const [formData, setFormData] = useState<GroupFormData>({
-        name: "",
-        desc: "",
+    const [formData, setFormData] = useState<JoinFormData>({
+        code: ""
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +33,7 @@ const CreateGroup = () => {
 
         // Check for empty fields
         Object.keys(formData).forEach((key) => {
-            if (!formData[key as keyof GroupFormData]) {
+            if (!formData[key as keyof JoinFormData]) {
                 newErrors[key as keyof FormErrors] = "This field is required";
             }
         });
@@ -50,7 +47,7 @@ const CreateGroup = () => {
 
         if (validateForm()) {
             try {
-                const response = await fetch("http://localhost:5000/create_group", {
+                const response = await fetch("http://localhost:5000/join_group", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -60,16 +57,17 @@ const CreateGroup = () => {
                 });
 
                 const data = await response.json();
+                console.log(data, data.joined_group)
 
-                if (data.group_created == "true") {
-                    console.log("Group created successfully");
+                if (data.joined_group == "true") {
+                    console.log("Joined group successfully");
                 } else {
-                    console.log("Failed to create group.");
+                    console.log("Failed to join group.");
                 }
             } catch (error) {
-                console.error("Error Creating Group:", error);
+                console.error("Error Joining Group:", error);
                 setErrors({
-                    general: "An error occurred during creation",
+                    general: "An error occurred during joining",
                 });
             }
         }
@@ -77,38 +75,27 @@ const CreateGroup = () => {
 
     return (
         <section>
-            <h2>Create a Group</h2>
-            <form onSubmit={handleSubmit} id="create-group-form">
+            <h2>Join a Group via Code</h2>
+            <form onSubmit={handleSubmit} id="join-group-form">
                 {errors.general && (
                     <p>{errors.general}</p>
                 )}
 
-                {errors.name && (
-                    <p> {errors.name}</p>
+                {errors.code && (
+                    <p> {errors.code}</p>
                 )}
                 <input
-                    name="name"
+                    name="code"
                     type="text"
-                    placeholder="Enter Group Name"
+                    placeholder="Enter Code"
                     onChange={handleInputChange}
-                    value={formData.name}
+                    value={formData.code}
                 />
 
-                {errors.desc && (
-                    <p>{errors.desc}</p>
-                )}
-                <input
-                    name="desc"
-                    type="text"
-                    placeholder="Enter Group Description"
-                    onChange={handleInputChange}
-                    value={formData.desc}
-                />
-
-                <button type="submit">Create Group</button>
+                <button type="submit">Join</button>
             </form>
         </section>
     );
 };
 
-export default CreateGroup;
+export default JoinGroup;

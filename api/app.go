@@ -12,11 +12,11 @@ func Run() {
 	// Authentication routes
 	mux.HandleFunc("/api/signup", Signup)
 	mux.HandleFunc("/api/login", Login)
-	//mux.HandleFunc("/api/logout", Logout)
 
 	// Groups
 	mux.HandleFunc("/api/get_groups", GetGroups)
 	mux.HandleFunc("/api/create_group", CreateGroup)
+	mux.HandleFunc("/api/join_group", JoinGroup)
 
 	handlerWithMiddleware := utils.CORSMiddleware(mux)
 

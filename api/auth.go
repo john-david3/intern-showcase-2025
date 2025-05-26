@@ -5,16 +5,13 @@ import (
 	"fmt"
 	"intern-showcase-2025/db"
 	"intern-showcase-2025/utils"
+	"log/slog"
 	"net/http"
 	"strconv"
 )
 
 func Signup(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		err := http.StatusMethodNotAllowed
-		http.Error(w, "Invalid method", err)
-		return
-	}
+	utils.CheckMethod(r, w, http.MethodPost)
 
 	email := r.FormValue("email")
 	password := r.FormValue("password")
@@ -55,18 +52,14 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("User registered with email: ", email)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`{"message": "Signup Successful"}`))
+	slog.Info("user registered with email: ", email)
 
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		err := http.StatusMethodNotAllowed
-		http.Error(w, "Invalid method", err)
-		return
-	}
+	utils.CheckMethod(r, w, http.MethodPost)
 
 	email := r.FormValue("email")
 	password := r.FormValue("password")
@@ -97,13 +90,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		utils.SendErrorResponse(w, errors.New("passwords do not match"), "password do not match", "logged_in")
 	}
 
-	fmt.Println("User logged in with username: ", email)
 	userId, _ := strconv.Atoi(data[0])
 	res := fmt.Sprintf(`{"message": "Login Successful", "user_id": %d}`, userId)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(res))
-}
-
-func Logout(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Logout successful")
+	slog.Info("User logged in with email: ", email)
 }

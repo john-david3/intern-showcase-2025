@@ -6,8 +6,11 @@ SELECT * FROM users;
 
 
 -- groups table --
-INSERT INTO groups (name, description)
-VALUES ('admin', 'group for admins');
+INSERT INTO groups (name, description, code)
+VALUES ('admin', 'group for admins', '00000000');
+
+INSERT INTO groups (name, description, code)
+VALUES ('wow', 'what a great group', '00000001');
 
 INSERT INTO group_contains (uid, gid)
 VALUES
@@ -20,8 +23,10 @@ SELECT * FROM groups;
 SELECT * FROM group_contains;
 SELECT * FROM session;
 
+SELECT gid FROM group_contains WHERE uid = 2;
+
 SELECT
-    g.*
+    g.name, g.description
 FROM
     users AS u
 INNER JOIN
@@ -33,4 +38,4 @@ INNER JOIN
 ON
     gc.gid = g.gid
 WHERE
-    u.uid = 2;
+    u.uid = 3;
