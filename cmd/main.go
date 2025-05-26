@@ -1,9 +1,9 @@
 package main
 
 import (
-	"intern-showcase-2025/core"
+	"intern-showcase-2025/api"
 )
 
 func main() {
-	core.Run()
+	api.Run()
 }
