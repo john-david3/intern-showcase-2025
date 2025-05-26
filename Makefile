@@ -17,3 +17,7 @@ run:
 dev:
 	@echo "Running React app"
 	@cd $(REACT_DIR) && $(NPMRUN)
+
+serve:
+	@echo "Running flask server"
+	@flask run
