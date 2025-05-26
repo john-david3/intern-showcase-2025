@@ -189,7 +189,7 @@ func JoinGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check is user is already in the group
-	rows, err = db.Fetch("SELECT gid FROM group_contains WHERE uid = ?;", userId)
+	rows, err = db.Fetch("SELECT gid FROM group_contains WHERE uid = ? AND gid = ?;", userId, groups[0][0])
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error getting group", "joined_group")
 		return
