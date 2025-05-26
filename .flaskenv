@@ -1,2 +1,2 @@
-FLASK_APP=core/app.py
+FLASK_APP=cmd/app.py
 FLASK_ENV=debug

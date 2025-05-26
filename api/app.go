@@ -1,4 +1,4 @@
-package core
+package api
 
 import (
 	"intern-showcase-2025/utils"
