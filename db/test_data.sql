@@ -6,8 +6,8 @@ SELECT * FROM users;
 
 
 -- groups table --
-INSERT INTO groups (name, description)
-VALUES ('admin', 'group for admins');
+INSERT INTO groups (name, description, code)
+VALUES ('admin', 'group for admins', '000000');
 
 INSERT INTO group_contains (uid, gid)
 VALUES

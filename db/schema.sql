@@ -10,7 +10,8 @@ DROP TABLE IF EXISTS groups;
 CREATE TABLE groups (
     gid INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(32) NOT NULL,
-    description TEXT
+    description TEXT,
+    code VARCHAR(8)
 );
 
 DROP TABLE IF EXISTS group_contains;
@@ -22,7 +23,7 @@ CREATE TABLE group_contains(
 DROP TABLE IF EXISTS session;
 CREATE TABLE session (
     sid VARCHAR(64) PRIMARY KEY,
-    uid,
     data TEXT,
-    expires DATETIME
+    expires DATETIME,
+    uid INTEGER REFERENCES users(uid) ON DELETE CASCADE
 );

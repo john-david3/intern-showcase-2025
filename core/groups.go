@@ -110,8 +110,15 @@ func CreateGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Generate a unique 8 digit code
+	code, err := utils.GenerateCode()
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error generating code", "group_created")
+		return
+	}
+
 	// Create the new group
-	err = db.Execute("INSERT INTO groups(name, description) VALUES(?, ?);", name, desc)
+	err = db.Execute("INSERT INTO groups(name, description, code) VALUES(?, ?, ?);", name, desc, code)
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error creating group", "group_created")
 		return
