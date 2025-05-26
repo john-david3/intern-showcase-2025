@@ -38,6 +38,8 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 				WHERE u.uid = ?;`,
 		userId,
 	)
+	defer rows.Close()
+
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error getting user", "group_loaded")
 		return

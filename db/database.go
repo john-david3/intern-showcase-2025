@@ -48,7 +48,6 @@ func CloseConnection() {
 
 func DBRowToStringList(rows *sql.Rows) ([]string, error) {
 	var result []string
-	defer rows.Close()
 
 	cols, err := rows.Columns()
 	if err != nil {

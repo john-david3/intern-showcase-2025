@@ -21,7 +21,7 @@ SELECT * FROM group_contains;
 SELECT * FROM session;
 
 SELECT
-    g.*
+    g.name, g.description
 FROM
     users AS u
 INNER JOIN
@@ -33,4 +33,4 @@ INNER JOIN
 ON
     gc.gid = g.gid
 WHERE
-    u.uid = 1;
+    u.uid = 3;
