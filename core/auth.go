@@ -1,199 +1,109 @@
 package core
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
 	"intern-showcase-2025/db"
 	"intern-showcase-2025/utils"
-	"io"
-	"log/slog"
 	"net/http"
+	"strconv"
 )
 
-func readData(body io.Reader) ([]byte, error) {
-	res, err := io.ReadAll(body)
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
-}
-
-func signup(w http.ResponseWriter, r *http.Request) {
-	// Set up a writer
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-	response := map[string]bool{"account_created": false}
-
-	// Read form data from frontend
-	body, err := readData(r.Body)
-	if err != nil {
-		slog.Error("error reading from frontend", "error", err)
-	}
-
-	// Unmarshall the data
-	signupData := make(map[string]string)
-	err = json.Unmarshal(body, &signupData)
-	if err != nil {
-		slog.Error("error unmarshalling signup data", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
+func Signup(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		err := http.StatusMethodNotAllowed
+		http.Error(w, "Invalid method", err)
 		return
 	}
 
-	// Collect & check the data
-	email := utils.Sanitise(signupData["email"])
-	password := utils.HashData(utils.Sanitise(signupData["password"]))
-	password2 := utils.HashData(utils.Sanitise(signupData["password2"]))
-	location := utils.Sanitise(signupData["location"])
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+	password2 := r.FormValue("password2")
+	location := r.FormValue("location")
 
 	if password != password2 {
-		slog.Error("passwords do not match")
-		_ = json.NewEncoder(w).Encode(response)
+		utils.SendErrorResponse(w, errors.New("passwords do not match"), "password do not match", "password")
 		return
 	}
 
-	// Add user to the database
-	err = db.CreateConnection()
+	err := db.CreateConnection()
 	if err != nil {
-		slog.Error("error creating connection", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
+		utils.SendErrorResponse(w, err, "error creating db connection", "account_created")
 		return
 	}
 	defer db.CloseConnection()
 
-	// Check if email already exists
-	rows, err := db.Fetch("SELECT uid FROM users WHERE email = ?", email)
-	var strRows []string
+	rows, err := db.Fetch("SELECT * FROM users WHERE email = ?", email)
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error fetching user", "account_created")
+		return
+	}
 
+	var data []string
 	for rows.Next() {
-		strRows, err = db.DBRowToStringList(rows)
-		if err != nil || strRows != nil {
-			slog.Error("error creating user", "error", err)
-			_ = json.NewEncoder(w).Encode(response)
+		data, err = db.DBRowToStringList(rows)
+		if err != nil || len(data) != 0 {
+			utils.SendErrorResponse(w, err, "user already exists", "account_created")
 			return
 		}
 	}
 
-	// Add user to database
-	if email != "" && password != "" && location != "" && password2 != "" {
-		err = db.Execute("INSERT INTO users (email, password, location) VALUES (?, ?, ?)", email, password, location)
-		if err != nil {
-			slog.Error("error creating user", "error", err)
-			_ = json.NewEncoder(w).Encode(response)
-			return
-		}
+	hashedPassword, _ := utils.HashData(password)
+	err = db.Execute("INSERT INTO users (email, password, location) VALUES (?, ?, ?)", email, hashedPassword, location)
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error inserting user", "account_created")
+		return
 	}
 
-	// Successful Creation
-	slog.Info("user created", "email", email)
-	response["account_created"] = true
-	_ = json.NewEncoder(w).Encode(response)
+	fmt.Println("User registered with email: ", email)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"message": "Signup Successful"}`))
 
 }
 
-func login(w http.ResponseWriter, r *http.Request) {
-	// Set up a writer
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-	response := map[string]bool{"account_created": false}
-
-	// Read form data from frontend
-	body, err := readData(r.Body)
-	if err != nil {
-		slog.Error("error reading from frontend", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
+func Login(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		err := http.StatusMethodNotAllowed
+		http.Error(w, "Invalid method", err)
 		return
 	}
 
-	// Unmarshall the data
-	loginData := make(map[string]string)
-	err = json.Unmarshal(body, &loginData)
-	if err != nil {
-		slog.Error("error unmarshalling login data", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
-		return
-	}
+	email := r.FormValue("email")
+	password := r.FormValue("password")
 
-	// Collect & check the data
-	email := utils.Sanitise(loginData["email"])
-	password := utils.Sanitise(loginData["password"])
-
-	// Add user to the database
-	err = db.CreateConnection()
+	err := db.CreateConnection()
 	if err != nil {
-		slog.Error("error creating connection", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
+		utils.SendErrorResponse(w, err, "error creating db connection", "logged_in")
 		return
 	}
 	defer db.CloseConnection()
 
-	// Check if user is in the database
-	rows, err := db.Fetch(
-		"SELECT uid, email, password FROM users WHERE email = ? AND password = ?",
-		email,
-		utils.HashData(password),
-	)
+	rows, err := db.Fetch("SELECT uid, password FROM users WHERE email = ?", email)
 	if err != nil {
-		slog.Error("user does not exist", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
+		utils.SendErrorResponse(w, err, "error fetching user", "logged_in")
 		return
 	}
 
-	var dataset []string
+	var data []string
 	for rows.Next() {
-		dataset, err = db.DBRowToStringList(rows)
-		if err != nil {
-			slog.Error("error converting dataset", "error", err)
-			_ = json.NewEncoder(w).Encode(response)
+		data, err = db.DBRowToStringList(rows)
+		if err != nil || len(data) == 0 {
+			utils.SendErrorResponse(w, err, "user does not exist", "logged_in")
 			return
 		}
 	}
 
-	fmt.Println(password, dataset[2])
-	if len(dataset) == 3 && dataset[2] == utils.HashData(password) {
-		slog.Info("user logged in", "email", email)
-		response["account_created"] = true
-		_ = json.NewEncoder(w).Encode(response)
-	} else {
-		slog.Error("user does not exist")
-		_ = json.NewEncoder(w).Encode(response)
-		return
+	if !utils.CheckPasswordHash(password, data[1]) {
+		utils.SendErrorResponse(w, errors.New("passwords do not match"), "password do not match", "logged_in")
 	}
 
-	// Update session information
-	userId := dataset[0]
-	session, err := store.Get(r, "users")
-	session.Values["user_id"] = userId
-	session.Values["email"] = email
-	err = session.Save(r, w)
-	if err != nil {
-		slog.Error("error saving session", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
-		return
-	}
+	fmt.Println("User logged in with username: ", email)
+	userId, _ := strconv.Atoi(data[0])
+	res := fmt.Sprintf(`{"message": "Login Successful", "user_id": %d}`, userId)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(res))
 }
 
-func logout(w http.ResponseWriter, r *http.Request) {
-	response := map[string]bool{"account_created": false}
-
-	session, err := store.Get(r, "user-id")
-	if err != nil {
-		slog.Error("error getting session", "error", err)
-		return
-	}
-	session.Values["users"] = make(map[interface{}]interface{})
-	session.Options.MaxAge = -1
-	err = session.Save(r, w)
-	if err != nil {
-		slog.Error("error saving session", "error", err)
-		_ = json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	response["account_created"] = true
-	slog.Info("user logged out")
-	_ = json.NewEncoder(w).Encode(response)
+func Logout(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Logout successful")
 }

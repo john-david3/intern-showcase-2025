@@ -17,3 +17,11 @@ run:
 dev:
 	@echo "Running React app"
 	@cd $(REACT_DIR) && $(NPMRUN)
+
+serve:
+	@echo "Running flask server"
+	@flask run
+
+install-deps:
+	@pip3 install -r requirements.txt
+	@npm install react-router-dom

@@ -9,13 +9,11 @@ interface LoginFormData {
 interface FormErrors {
     email?: string;
     password?: string;
-    password2?: string;
-    location?: string;
     general?: string;
 }
 
 const LoginForm = () => {
-    const { isLoggedIn, setIsLoggedIn } = useAuth();
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [errors, setErrors] = useState<FormErrors>({});
 
     const [formData, setFormData] = useState<LoginFormData>({
@@ -50,27 +48,28 @@ const LoginForm = () => {
 
         if (validateForm()) {
             try {
-                const response = await fetch("http://127.0.0.1:8080/api/login", {
+                const response = await fetch("http://localhost:5000/login", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
+                    credentials: "include",
                     body: JSON.stringify(formData),
                 });
 
                 const data = await response.json();
 
-                if (data.account_created) {
-                    console.log("Registration Successful! Account created successfully");
+                if (data.logged_in) {
+                    console.log("Login Successful!");
                     setIsLoggedIn(true);
                 } else {
-                    console.log("Failed to create account.");
+                    console.log("Failed to log in.");
                     setIsLoggedIn(false);
                 }
             } catch (error) {
-                console.error("Error Registering:", error);
+                console.error("Error Login:", error);
                 setErrors({
-                    general: "An error occurred during registration",
+                    general: "An error occurred during login",
                 });
             }
         }
@@ -79,7 +78,8 @@ const LoginForm = () => {
     return (
         <section>
             <h2>Login</h2>
-            <p>is Logged in? : {isLoggedIn}</p>
+            <p>Is logged in? : {isLoggedIn ? "Yes" : "No"}</p>
+
             <form onSubmit={handleSubmit} id="login-form">
                 {errors.general && (
                     <p>{errors.general}</p>

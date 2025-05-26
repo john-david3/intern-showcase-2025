@@ -59,7 +59,7 @@ const SignupForm = () => {
 
         if (validateForm()) {
             try {
-                const response = await fetch("http://127.0.0.1:8080/api/signup", {
+                const response = await fetch("http://localhost:5000/signup", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -72,7 +72,6 @@ const SignupForm = () => {
                 if (data.account_created) {
                     console.log("Registration Successful! Account created successfully");
                     setIsLoggedIn(true);
-                    window.location.reload();
                 } else {
                     console.log("Failed to create account.");
                     setIsLoggedIn(false);
