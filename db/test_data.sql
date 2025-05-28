@@ -39,3 +39,8 @@ ON
     gc.gid = g.gid
 WHERE
     u.uid = 2;
+
+SELECT w.option
+FROM groups AS g JOIN wheel_options AS w
+on g.wid = w.wid
+WHERE g.gid = 1;
