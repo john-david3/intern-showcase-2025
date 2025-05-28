@@ -57,3 +57,75 @@ button{
   display: block;
   margin: 0 auto;
 }
+
+/* THE WHEEL */
+ul{
+  list-style-type: none;
+}
+
+li{
+  background-color: #dedede;
+  color: #242424;
+  margin: 1em auto;
+  padding: 1em;
+}
+
+li button{
+  margin: 1em auto 0 auto;
+}
+
+small{
+  color: #666;
+  margin-left: 10px;
+}
+
+[title="Include"]{
+  background-color: gray;
+}
+
+[title="Exclude"]{
+  background-color: orange;
+}
+
+label~select{
+  padding: 0.5em;
+  margin:1em 0.5em;
+}
+
+.wheeler{
+  width: 30em;
+  height: 30em;
+  border: 5px solid black;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+#winner{
+  background-color: red;
+  padding: 1em;
+  border-radius: 5px;
+  width: 50%;
+  justify-self: center;
+  margin-top:2em;
+}
+
+section:first-of-type{
+  margin-top:1em;
+}
+
+#pointer{
+  position: relative;
+  display: inline-block;
+}
+
+svg{
+  width:300px;
+  height: 300px;
+  border: 5px solid black;
+  border-radius: 50%
+}
