@@ -99,11 +99,20 @@ def create_group():
     data = request.get_json()
     name = data.get("name")
     desc = data.get("desc")
+    is_random = data.get("is_random")
+
+    if is_random == "on":
+        is_random = 1
+    else:
+        is_random = 0
 
     send_data = {
         "name": name,
         "desc": desc,
+        "is_random": is_random
     }
+
+    print(send_data)
 
     user_id = session.get("user_id")
     if not user_id:
@@ -145,6 +154,25 @@ def join_group():
     except Exception:
         print("Failed to join group")
         return jsonify({"error": "failed to join group"})
+
+@app.route("/join_random_group", methods=["GET", "POST"])
+def join_random_group():
+    if not request.get_json():
+        return jsonify({"message": "Expected JSON data"}), 400
+
+    user_id = session.get("user_id")
+
+    headers = {
+        "X-User-ID": str(user_id),
+    }
+
+    try:
+        res = requests.post("http://localhost:8080/api/join_random_group", headers=headers)
+        data = res.json()
+        return jsonify(data)
+    except Exception:
+        print("Failed to join random group")
+        return jsonify({"error": "failed to join random group"})
 
 
 # SESSION ROUTES

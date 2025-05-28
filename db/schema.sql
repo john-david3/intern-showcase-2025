@@ -11,7 +11,9 @@ CREATE TABLE groups (
     gid INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(32) NOT NULL,
     description TEXT,
-    code VARCHAR(8)
+    code VARCHAR(8) NOT NULL,
+    isRandom BOOLEAN DEFAULT 0,
+    expiration DATETIME DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS group_contains;

@@ -6,7 +6,9 @@ import (
 	"intern-showcase-2025/db"
 	"intern-showcase-2025/utils"
 	"log/slog"
+	"math/rand"
 	"net/http"
+	"time"
 )
 
 func GetGroups(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +31,7 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 	defer db.CloseConnection()
 
 	rows, err := db.Fetch(`
-				SELECT g.name, g.description
+				SELECT g.gid, g.name, g.description
 				FROM users AS u
 				INNER JOIN group_contains AS gc
 				ON u.uid = gc.uid
@@ -57,9 +59,10 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(groups)
 
 	// Send the results to the frontend to be displayed
-	groupMap := make(map[string]string)
+	groupMap := map[string][]string{}
 	for _, group := range groups {
-		groupMap[group[0]] = group[1]
+		key := "group_" + group[0]
+		groupMap[key] = group
 	}
 
 	jsonMap, err := json.Marshal(groupMap)
@@ -76,6 +79,9 @@ func CreateGroup(w http.ResponseWriter, r *http.Request) {
 	// Collect & check the data
 	name := r.FormValue("name")
 	desc := r.FormValue("desc")
+	isRandom := r.FormValue("is_random")
+
+	fmt.Println(isRandom)
 
 	userId := r.Header.Get("X-User-ID")
 	if userId == "" {
@@ -121,10 +127,16 @@ func CreateGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create the new group
-	err = db.Execute("INSERT INTO groups(name, description, code) VALUES(?, ?, ?);", name, desc, code)
+	err = db.Execute("INSERT INTO groups(name, description, code, isRandom) VALUES(?, ?, ?, ?);", name, desc, code, isRandom)
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error creating group", "group_created")
 		return
+	}
+
+	fmt.Println("isRandom: ", isRandom)
+	if isRandom == "on" {
+		expiration := time.Now()
+		db.Execute("UPDATE groups SET expiration = ? WHERE name = ?;", expiration, name)
 	}
 
 	rows, err = db.Fetch("SELECT gid FROM groups WHERE name = ?;", name)
@@ -220,5 +232,82 @@ func JoinGroup(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`{"joined_group": "true"}`))
 	slog.Info("group joined", "group", groups[0][0])
+
+}
+
+func JoinRandomGroup(w http.ResponseWriter, r *http.Request) {
+	utils.CheckMethod(r, w, http.MethodPost)
+
+	slog.Info("attempting to join random group")
+	userId := r.Header.Get("X-User-ID")
+
+	err := db.CreateConnection()
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error creating connection", "joined_group")
+		return
+	}
+	defer db.CloseConnection()
+
+	// Get all the random groups
+	rows, err := db.Fetch("SELECT gid FROM groups WHERE isRandom = 1;")
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error getting group", "joined_group")
+		return
+	}
+
+	var groups [][]string
+	for rows.Next() {
+		group, err := db.DBRowToStringList(rows)
+		if err != nil || len(group) == 0 {
+			utils.SendErrorResponse(w, err, "error converting groups", "joined_group")
+			return
+		}
+		groups = append(groups, group)
+	}
+
+	if len(groups) == 0 {
+		utils.SendErrorResponse(w, fmt.Errorf("no groups found"), "no groups found", "joined_group")
+		return
+	}
+
+	found := false
+	var randIndex int
+
+	for !found {
+		randIndex = rand.Intn(len(groups))
+
+		rows, err = db.Fetch("SELECT gid FROM group_contains WHERE uid = ? AND gid = ?;", userId, groups[randIndex][0])
+		if err != nil {
+			utils.SendErrorResponse(w, err, "error getting group", "joined_group")
+			return
+		}
+
+		var isExist [][]string
+		for rows.Next() {
+			ok, err := db.DBRowToStringList(rows)
+			if err != nil {
+				utils.SendErrorResponse(w, err, "error converting groups", "joined_group")
+				return
+			}
+			isExist = append(isExist, ok)
+		}
+
+		if len(isExist) > 0 {
+			continue
+		}
+
+		found = true
+	}
+
+	// Add the user to the group
+	err = db.Execute(`INSERT INTO group_contains(uid, gid) VALUES(?, ?);`, userId, groups[randIndex][0])
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error joining group", "joined_group")
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"joined_group": "true"}`))
+	slog.Info("group joined", "group", groups[randIndex][0])
 
 }

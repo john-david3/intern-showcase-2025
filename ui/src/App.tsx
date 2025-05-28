@@ -5,6 +5,7 @@ import LoginForm from "./components/Auth/LoginForm.tsx"
 import GroupPage from "./pages/GroupPage.tsx"
 import CreateGroup from "./components/Groups/CreateGroup.tsx"
 import JoinGroup from "./components/Groups/JoinGroup.tsx";
+import JoinRandomGroup from "./components/Groups/JoinRandomGroup.tsx";
 
 function App() {
   return (
@@ -14,7 +15,8 @@ function App() {
             <Link to="/login">Login</Link> |{" "}
             <Link to="/groups">Group Page</Link> |{" "}
             <Link to="/create_group">Create a Group</Link> |{" "}
-            <Link to="/join_group">Join a Group</Link>
+            <Link to="/join_group">Join a Group</Link> |{" "}
+            <Link to="/join_random_group">Join a Random Group</Link>
         </nav>
 
         <section>
@@ -24,6 +26,7 @@ function App() {
                 <Route path="/groups" element={<GroupPage />} />
                 <Route path="/create_group" element={<CreateGroup />} />
                 <Route path="/join_group" element={<JoinGroup />} />
+                <Route path="/join_random_group" element={<JoinRandomGroup />} />
                 <Route path="/" element={<h1>Welcome! Choose a page above.</h1>} />
             </Routes>
         </section>
