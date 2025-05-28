@@ -25,8 +25,11 @@ func GetOptions(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := db.Fetch(`
 			SELECT w.option
-			FROM groups AS g JOIN wheel_options AS w
-			on g.wid = w.wid
+			FROM groups AS g
+			INNER JOIN group_wheel AS gw
+			ON g.gid = gw.gid
+			INNER JOIN wheel_options AS w
+			ON gw.wid = w.wid
 			WHERE g.gid = ?;`, groupId,
 	)
 

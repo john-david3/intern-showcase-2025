@@ -1,4 +1,4 @@
-import React, {useState, type SetStateAction} from "react";
+import {useState, type SetStateAction} from "react";
 import SimpleWheel from "./SimpleWheel.tsx";
 
 const DEFAULT_OPTIONS = [

@@ -13,8 +13,7 @@ CREATE TABLE groups (
     description TEXT,
     code VARCHAR(8) NOT NULL,
     isRandom BOOLEAN DEFAULT 0,
-    expiration DATETIME DEFAULT NULL,
-    wid REFERENCES wheel_options(wid) ON DELETE CASCADE
+    expiration DATETIME DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS group_contains;
@@ -31,8 +30,14 @@ CREATE TABLE session (
     uid INTEGER REFERENCES users(uid) ON DELETE CASCADE
 );
 
+DROP TABLE IF EXISTS group_wheel;
+CREATE TABLE group_wheel (
+    gid INTEGER REFERENCES groups(gid) ON DELETE CASCADE ON UPDATE CASCADE,
+    wid INTEGER REFERENCES wheel_options(wid) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 DROP TABLE IF EXISTS wheel_options;
 CREATE TABLE wheel_options(
-    wid INTEGER PRIMARY KEY,
+    wid INTEGER,
     option VARCHAR(64)
 );

@@ -22,6 +22,7 @@ SELECT * FROM users;
 SELECT * FROM groups;
 SELECT * FROM group_contains;
 SELECT * FROM session;
+SELECT * FROM wheel_options;
 
 SELECT gid FROM group_contains WHERE uid = 2;
 
@@ -30,7 +31,7 @@ SELECT
 FROM
     users AS u
 INNER JOIN
-        group_contains AS gc
+    group_contains AS gc
 ON
     u.uid = gc.uid
 INNER JOIN
@@ -40,7 +41,18 @@ ON
 WHERE
     u.uid = 2;
 
+
+-- DA WHEEL --
 SELECT w.option
-FROM groups AS g JOIN wheel_options AS w
-on g.wid = w.wid
-WHERE g.gid = 1;
+FROM
+    groups AS g
+INNER JOIN
+    group_wheel AS gw
+ON
+    g.gid = gw.gid
+INNER JOIN
+    wheel_options AS w
+ON
+    gw.wid = w.wid
+WHERE
+    g.gid = 1;
