@@ -1,12 +1,31 @@
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     uid INTEGER PRIMARY KEY AUTOINCREMENT,
-    email VARCHAR(128),
-    password VARCHAR(256),
-    firstname VARCHAR(32),
-    lastname VARCHAR(32),
-    location VARCHAR(64)
+    email VARCHAR(128) NOT NULL,
+    password VARCHAR(256) NOT NULL,
+    location VARCHAR(64) NOT NULL
 );
 
-INSERT INTO users (email, password, firstname, lastname, location)
-VALUES ('admin', 'admin', 'admin', 'admin', 'admin');
+DROP TABLE IF EXISTS groups;
+CREATE TABLE groups (
+    gid INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(32) NOT NULL,
+    description TEXT,
+    code VARCHAR(8) NOT NULL,
+    isRandom BOOLEAN DEFAULT 0,
+    expiration DATETIME DEFAULT NULL
+);
+
+DROP TABLE IF EXISTS group_contains;
+CREATE TABLE group_contains(
+    uid INTEGER,
+    gid INTEGER
+);
+
+DROP TABLE IF EXISTS session;
+CREATE TABLE session (
+    sid VARCHAR(64) PRIMARY KEY,
+    data TEXT,
+    expires DATETIME,
+    uid INTEGER REFERENCES users(uid) ON DELETE CASCADE
+);

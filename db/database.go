@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log/slog"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -13,7 +14,7 @@ var db *sql.DB
 func CreateConnection() error {
 	var err error
 
-	db, err = sql.Open("sqlite3", "/identifier.sqlite")
+	db, err = sql.Open("sqlite3", "../identifier.sqlite")
 
 	return err
 }
@@ -47,17 +48,32 @@ func CloseConnection() {
 
 func DBRowToStringList(rows *sql.Rows) ([]string, error) {
 	var result []string
-	defer rows.Close()
 
-	for rows.Next() {
-		var value string
-
-		err := rows.Scan(&value)
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, value)
+	cols, err := rows.Columns()
+	if err != nil {
+		return nil, err
 	}
 
+	values := make([]interface{}, len(cols))
+	valuePtrs := make([]interface{}, len(cols))
+
+	for i := range values {
+		valuePtrs[i] = &values[i]
+	}
+
+	if err = rows.Scan(valuePtrs...); err != nil {
+		return nil, err
+	}
+
+	for _, val := range values {
+		switch v := val.(type) {
+		case nil:
+			result = append(result, "NULL")
+		case []byte:
+			result = append(result, string(v))
+		default:
+			result = append(result, fmt.Sprint(v))
+		}
+	}
 	return result, nil
 }

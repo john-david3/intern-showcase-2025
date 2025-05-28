@@ -12,8 +12,16 @@ REACT_DIR		= ui
 
 run:
 	@echo "Running app"
-	@cd ${PROJECT_DIR} && $(GORUN) $(PROJECT_FILE)
+	@CGO_ENABLED=1 && cd ${PROJECT_DIR} && $(GORUN) $(PROJECT_FILE)
 
 dev:
 	@echo "Running React app"
 	@cd $(REACT_DIR) && $(NPMRUN)
+
+serve:
+	@echo "Running flask server"
+	@flask run
+
+install-deps:
+	@pip3 install -r requirements.txt
+	@npm install react-router-dom

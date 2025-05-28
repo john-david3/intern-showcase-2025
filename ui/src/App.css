@@ -40,3 +40,20 @@
 .read-the-docs {
   color: #888;
 }
+
+form input{
+  display: block;
+  margin: 1em auto;
+  padding:0.5em;
+  width: 50%;
+}
+
+label, p~input, label~input{
+  display: inline;
+  width: 15%
+}
+
+button{
+  display: block;
+  margin: 0 auto;
+}
