@@ -3,12 +3,14 @@ import AuthCheck from "../Auth/AuthCheck.tsx";
 
 interface GroupFormData {
     name: string;
-    desc: string;
+    desc?: string;
+    is_random?: string;
 }
 
 interface FormErrors {
     name?: string;
     desc?: string;
+    is_random?: string;
     general?: string;
 }
 
@@ -103,6 +105,17 @@ const CreateGroup = () => {
                     placeholder="Enter Group Description"
                     onChange={handleInputChange}
                     value={formData.desc}
+                />
+
+                {errors.is_random && (
+                    <p>{errors.is_random}</p>
+                )}
+                <label>Random Group?</label>
+                <input
+                    name="is_random"
+                    type="checkbox"
+                    onChange={handleInputChange}
+                    value={formData.is_random}
                 />
 
                 <button type="submit">Create Group</button>

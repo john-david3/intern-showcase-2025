@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
 const AuthCheck = () => {
@@ -21,7 +21,7 @@ const AuthCheck = () => {
     checkSession();
   }, [setIsLoggedIn]);
 
-  return null; // This component doesn’t render anything
+  return null;
 };
 
 export default AuthCheck;

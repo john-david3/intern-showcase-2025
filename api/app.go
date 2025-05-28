@@ -17,6 +17,7 @@ func Run() {
 	mux.HandleFunc("/api/get_groups", GetGroups)
 	mux.HandleFunc("/api/create_group", CreateGroup)
 	mux.HandleFunc("/api/join_group", JoinGroup)
+	mux.HandleFunc("/api/join_random_group", JoinRandomGroup)
 
 	handlerWithMiddleware := utils.CORSMiddleware(mux)
 
