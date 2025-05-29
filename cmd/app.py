@@ -175,6 +175,41 @@ def join_random_group():
         return jsonify({"error": "failed to join random group"})
 
 
+# GROUP PAGE ROUTES
+@app.route("/get_options", methods=["GET", "POST"])
+def get_options():
+    """
+    Returns a map of all the loadable information on the group page
+    """
+
+    if not request.get_json():
+        return jsonify({"message": "Expected JSON data"}), 400
+
+    data = request.get_json()
+    group_id = data.get("group_id")
+
+    wheel_info = get_wheel_info(group_id)
+
+    info = {
+        "wheel_info": wheel_info
+    }
+
+    return jsonify(info)
+
+
+def get_wheel_info(group_id: str) -> requests.Response | None:
+    send_data = {
+        "group_id": group_id
+    }
+
+    try:
+        r = requests.post("http://localhost:8080/api/wheel_info", data=send_data)
+        return r
+    except Exception:
+        print("Failed to get wheel information")
+        return None
+
+
 # SESSION ROUTES
 @app.route("/session_status", methods=["GET"])
 def session_status():
@@ -183,3 +218,8 @@ def session_status():
         return jsonify({"logged_in": True, "user_id": user_id})
     else:
         return jsonify({"logged_in": False})
+
+
+# HELPER METHODS
+def is_logged_in(user_id):
+    pass

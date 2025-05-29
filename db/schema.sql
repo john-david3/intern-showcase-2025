@@ -29,3 +29,15 @@ CREATE TABLE session (
     expires DATETIME,
     uid INTEGER REFERENCES users(uid) ON DELETE CASCADE
 );
+
+DROP TABLE IF EXISTS group_wheel;
+CREATE TABLE group_wheel (
+    gid INTEGER REFERENCES groups(gid) ON DELETE CASCADE ON UPDATE CASCADE,
+    wid INTEGER REFERENCES wheel_options(wid) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+DROP TABLE IF EXISTS wheel_options;
+CREATE TABLE wheel_options(
+    wid INTEGER,
+    option VARCHAR(64)
+);

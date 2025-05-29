@@ -3,3 +3,4 @@ identifier.sqlite
 ui/node_modules
 .venv
 node_modules
+.DS_Store

@@ -19,6 +19,9 @@ func Run() {
 	mux.HandleFunc("/api/join_group", JoinGroup)
 	mux.HandleFunc("/api/join_random_group", JoinRandomGroup)
 
+	// Group information
+	mux.HandleFunc("/api/wheel_info", GetOptions)
+
 	handlerWithMiddleware := utils.CORSMiddleware(mux)
 
 	slog.Info("server running on http://localhost:8080")
