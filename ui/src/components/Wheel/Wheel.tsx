@@ -2,21 +2,6 @@ import React, {useState, useEffect, type SetStateAction} from "react";
 import SimpleWheel from "./SimpleWheel.tsx";
 import {getOptions} from "../../utils/GetOptions.ts";
 
-const DEFAULT_OPTIONS = [
-    {option: 'Pizza', category: 'American', distance: 5, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {option: 'Burger', category: 'American', distance: 3, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
-    {option: 'Sushi', category: 'Asian', distance: 8, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {option: 'Tacos', category: 'Mexican', distance: 4, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
-    {option: 'Pasta', category: 'Mediterranean', distance: 6, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {option: 'Salad', category: 'Office Favourites', distance: 2, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
-    {option: 'Chicken', category: 'Office Favourites', distance: 3, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {option: 'Fish', category: 'Mediterranean', distance: 7, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
-    {option: 'Steak', category: 'American', distance: 10, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {option: 'Soup', category: 'Office Favourites', distance: 1, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
-    {option: 'Sandwich', category: 'Office Favourites', distance: 2, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {option: 'Rice Bowl', category: 'Asian', distance: 5, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
-];
-
 const CATEGORIES = ['All', 'American', 'Asian', 'Mediterranean', 'Mexican', 'Office Favourites'];
 
 interface NewOptionData {
@@ -31,10 +16,9 @@ interface FormErrors {
 }
 
 function Wheel() {
-    const [options, setOptions] = useState([])
+    const [options, setOptions] = useState<NewOptionData[]>([]);
     const [selectedOption, setSelectedOption] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('All');
-    const [maxDistance, setMaxDistance] = useState('all');
     const [excludedOptions, setExcludedOptions] = useState(new Set());
     const [errors, setErrors] = useState<FormErrors>({});
 
@@ -45,10 +29,17 @@ function Wheel() {
 
     useEffect(() => {
         async function fetchOptions() {
-            const res = await getOptions("1", "option");
-            if (res?.option_added){
-                setOptions(res.options);
+            try{
+                const res = await getOptions("1", "option");
+                if (res.options){
+                    setOptions(res.options);
+                } else {
+                    console.warn("No options received");
+                }
+            } catch (error) {
+                console.error("Error fetching options", error);
             }
+
         }
 
         fetchOptions();
@@ -142,11 +133,10 @@ function Wheel() {
     };
 
     const handleReset = () => {
-        setOptions();
+        setOptions([]);
         setSelectedOption(null);
         setExcludedOptions(new Set());
         setSelectedCategory('All');
-        setMaxDistance('all');
     };
 
     const filteredOptions = getFilteredOptions();

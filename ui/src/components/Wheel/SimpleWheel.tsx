@@ -61,14 +61,14 @@ const SimpleWheel = ({items, onSpinComplete} ) => {
                             <g key={index}>
                                 <path
                                     d={pathData}
-                                    fill={item.style.backgroundColor}
+                                    fill={"red"}
                                     stroke="#fff"
                                     strokeWidth="1"
                                 />
                                 <text
                                     x={textX}
                                     y={textY}
-                                    fill={item.style.color}
+                                    fill={"white"}
                                     fontSize="12"
                                     fontWeight="bold"
                                     textAnchor="middle"

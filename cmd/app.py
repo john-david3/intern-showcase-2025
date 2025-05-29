@@ -186,7 +186,8 @@ def get_options():
         return jsonify({"message": "Expected JSON data"}), 400
 
     data = request.get_json()
-    group_id = data.get("group_id")
+    group_id = data.get("groupId")
+    print(group_id)
 
     options = get_wheel_info(group_id)
     categories = get_wheel_categories(group_id)
@@ -195,6 +196,8 @@ def get_options():
         "options": options,
         "categories": categories
     }
+
+    print(info)
 
     return jsonify(info)
 
@@ -206,7 +209,7 @@ def get_wheel_categories(group_id):
 
     try:
         r = requests.post("http://localhost:8080/api/wheel_info", data=send_data)
-        return r
+        return r.json()
     except Exception:
         print("Failed to get wheel information")
         return None
@@ -219,7 +222,7 @@ def get_wheel_info(group_id: str) -> requests.Response | None:
 
     try:
         r = requests.post("http://localhost:8080/api/wheel_info", data=send_data)
-        return r
+        return r.json()
     except Exception:
         print("Failed to get wheel information")
         return None

@@ -15,7 +15,7 @@ export async function getOptions(groupId: string, data: string){
             });
 
             const data = await response.json();
-            if (data.option_added){
+            if (data){
                 console.log("Retrieved options")
                 return data
             } else {

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"intern-showcase-2025/db"
@@ -15,7 +16,6 @@ func GetOptions(w http.ResponseWriter, r *http.Request) {
 	slog.Info("attempting to get wheel options")
 	groupId := r.FormValue("group_id")
 	item := r.FormValue("item")
-	fmt.Println(groupId)
 
 	err := db.CreateConnection()
 	if err != nil {
@@ -24,21 +24,28 @@ func GetOptions(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.CloseConnection()
 
+	var rows *sql.Rows
 	if item == "options" {
-		item = "w.option"
-	} else {
-		item = "w.category"
-	}
-
-	rows, err := db.Fetch(`
-			SELECT ?
+		rows, err = db.Fetch(`
+			SELECT w.option
 			FROM groups AS g
 			INNER JOIN group_wheel AS gw
 			ON g.gid = gw.gid
 			INNER JOIN wheel_options AS w
 			ON gw.option = w.option
-			WHERE g.gid = ?;`, item, groupId,
-	)
+			WHERE g.gid = ?;`, groupId,
+		)
+	} else {
+		rows, err = db.Fetch(`
+			SELECT w.category
+			FROM groups AS g
+			INNER JOIN group_wheel AS gw
+			ON g.gid = gw.gid
+			INNER JOIN wheel_options AS w
+			ON gw.option = w.option
+			WHERE g.gid = ?;`, groupId,
+		)
+	}
 
 	var options []string
 	for rows.Next() {
@@ -55,7 +62,6 @@ func GetOptions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(options)
 	slog.Info("successfully sent options!")
 
@@ -109,7 +115,6 @@ func AddOptions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`{"added_option": "true"}`))
 	slog.Info("successfully added options!")
 
