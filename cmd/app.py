@@ -188,18 +188,20 @@ def get_options():
     data = request.get_json()
     group_id = data.get("group_id")
 
-    wheel_info = get_wheel_info(group_id)
+    options = get_wheel_info(group_id)
+    categories = get_wheel_categories(group_id)
 
     info = {
-        "wheel_info": wheel_info
+        "options": options,
+        "categories": categories
     }
 
     return jsonify(info)
 
-
-def get_wheel_info(group_id: str) -> requests.Response | None:
+def get_wheel_categories(group_id):
     send_data = {
-        "group_id": group_id
+        "group_id": group_id,
+        "item": "categories"
     }
 
     try:
@@ -208,6 +210,45 @@ def get_wheel_info(group_id: str) -> requests.Response | None:
     except Exception:
         print("Failed to get wheel information")
         return None
+
+def get_wheel_info(group_id: str) -> requests.Response | None:
+    send_data = {
+        "group_id": group_id,
+        "item": "options"
+    }
+
+    try:
+        r = requests.post("http://localhost:8080/api/wheel_info", data=send_data)
+        return r
+    except Exception:
+        print("Failed to get wheel information")
+        return None
+
+@app.route("/add_option", methods=["GET", "POST"])
+def add_option():
+    #TODO: Change group number to be gotten from frontend
+    if not request.get_json():
+        return jsonify({"message": "Expected JSON data"}), 400
+
+    data = request.get_json()
+    group_id = 1    #group_id = data.get("group_id")
+    option = data.get("option")
+    category = data.get("category")
+
+    send_data = {
+        "group_id": group_id,
+        "option": option,
+        "category": category
+    }
+
+    try:
+        res = requests.post("http://localhost:8080/api/add_option", data=send_data)
+        data = res.json()
+        return jsonify(data)
+
+    except Exception:
+        print("Failed to add option to wheel")
+        return jsonify({"error": "failed to add option to wheel"})
 
 
 # SESSION ROUTES

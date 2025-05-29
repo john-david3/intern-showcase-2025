@@ -33,11 +33,11 @@ CREATE TABLE session (
 DROP TABLE IF EXISTS group_wheel;
 CREATE TABLE group_wheel (
     gid INTEGER REFERENCES groups(gid) ON DELETE CASCADE ON UPDATE CASCADE,
-    wid INTEGER REFERENCES wheel_options(wid) ON DELETE CASCADE ON UPDATE CASCADE
+    option VARCHAR(64) REFERENCES wheel_options(option) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 DROP TABLE IF EXISTS wheel_options;
 CREATE TABLE wheel_options(
-    wid INTEGER,
-    option VARCHAR(64)
+    option VARCHAR(64) PRIMARY KEY,
+    category VARCHAR(64)
 );
