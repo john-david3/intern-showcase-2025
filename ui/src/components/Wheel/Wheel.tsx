@@ -1,4 +1,4 @@
-import React, {useState, type SetStateAction} from "react";
+import React, {useState, useEffect, type SetStateAction} from "react";
 import SimpleWheel from "./SimpleWheel.tsx";
 import {getOptions} from "../../utils/GetOptions.ts";
 
@@ -31,7 +31,7 @@ interface FormErrors {
 }
 
 function Wheel() {
-    const [options, setOptions] = getOptions("1", "option");
+    const [options, setOptions] = useState([])
     const [selectedOption, setSelectedOption] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [maxDistance, setMaxDistance] = useState('all');
@@ -43,16 +43,23 @@ function Wheel() {
         category: "",
     })
 
+    useEffect(() => {
+        async function fetchOptions() {
+            const res = await getOptions("1", "option");
+            if (res?.option_added){
+                setOptions(res.options);
+            }
+        }
+
+        fetchOptions();
+    }, [])
+
     // Filter options based on category, distance, and exclusions
     const getFilteredOptions = () => {
         let filtered = options;
 
         if (selectedCategory !== 'All') {
             filtered = filtered.filter(option => option.category === selectedCategory);
-        }
-
-        if (maxDistance !== 'all') {
-            filtered = filtered.filter(option => option.distance <= Number(maxDistance));
         }
 
         // Remove excluded options
@@ -135,7 +142,7 @@ function Wheel() {
     };
 
     const handleReset = () => {
-        setOptions(DEFAULT_OPTIONS);
+        setOptions();
         setSelectedOption(null);
         setExcludedOptions(new Set());
         setSelectedCategory('All');
