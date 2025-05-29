@@ -107,10 +107,9 @@ function Wheel() {
         <section>
             <section className="wheel">
                 <h2>Spin the Wheel of Food!</h2>
-                <label htmlFor="categoryFilter">
-                    Category:
-                </label>
+                <label>Category:</label>
                 <select
+                    name="category"
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
                 >
