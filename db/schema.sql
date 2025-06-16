@@ -24,7 +24,7 @@ CREATE TABLE group_contains(
 
 DROP TABLE IF EXISTS session;
 CREATE TABLE session (
-    sid VARCHAR(64) PRIMARY KEY,
+    sid VARCHAR(64),
     data TEXT,
     expires DATETIME,
     uid INTEGER REFERENCES users(uid) ON DELETE CASCADE

@@ -2,36 +2,17 @@ import {useState, type SetStateAction} from "react";
 import SimpleWheel from "./SimpleWheel.tsx";
 
 const DEFAULT_OPTIONS = [
-    {option: 'Pizza', category: 'American', distance: 5, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {option: 'Burger', category: 'American', distance: 3, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
-    {option: 'Sushi', category: 'Asian', distance: 8, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {option: 'Tacos', category: 'Mexican', distance: 4, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
-    {option: 'Pasta', category: 'Mediterranean', distance: 6, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {
-        option: 'Salad',
-        category: 'Office Favourites',
-        distance: 2,
-        style: {backgroundColor: '#f5f5f5', color: '#000000'}
-    },
-    {
-        option: 'Chicken',
-        category: 'Office Favourites',
-        distance: 3,
-        style: {backgroundColor: '#ff0000', color: '#f5f5f5'}
-    },
-    {option: 'Fish', category: 'Mediterranean', distance: 7, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
-    {option: 'Steak', category: 'American', distance: 10, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {option: 'Soup', category: 'Office Favourites', distance: 1, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
-    {
-        option: 'Sandwich',
-        category: 'Office Favourites',
-        distance: 2,
-        style: {backgroundColor: '#ff0000', color: '#f5f5f5'}
-    },
-    {option: 'Rice Bowl', category: 'Asian', distance: 5, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
+    {option: 'Five Points', category: 'Sandwiches', distance: 5, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
+    {option: 'Sonnies Deli', category: 'Sandwiches', distance: 3, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
+    {option: 'English Market', category: 'Sandwiches', distance: 8, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
+    {option: 'Boojum', category: 'Mexican', distance: 4, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
+    {option: 'Centra', category: 'Everything', distance: 6, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
+    {option: 'Scoozis', category: 'Italian', distance: 2, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
+    {option: 'Marina Market', category: 'Everything', distance: 3, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
+    {option: 'Grumpy Baker', category: 'Sandwiches', distance: 2, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
 ];
 
-const CATEGORIES = ['All', 'American', 'Asian', 'Mediterranean', 'Mexican', 'Office Favourites'];
+const CATEGORIES = ['All', 'Sandwiches', 'Mexican', 'Italian', 'Everything'];
 
 function Wheel() {
     const [options, setOptions] = useState(DEFAULT_OPTIONS);
