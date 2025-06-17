@@ -16,7 +16,7 @@ func SendErrorResponse(w http.ResponseWriter, err error, message string, respons
 	w.Write([]byte(response))
 }
 
-func GenerateCode(close bool) (string, error) {
+func GenerateCode(closeDB bool) (string, error) {
 	low := 10000000
 	high := 99999999
 	var code string
@@ -27,7 +27,7 @@ func GenerateCode(close bool) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if close {
+	if closeDB {
 		defer db.CloseConnection()
 	}
 

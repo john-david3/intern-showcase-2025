@@ -52,6 +52,12 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	added := AddDefaultGroup(email, location)
+	if !added {
+		utils.SendErrorResponse(w, nil, "error adding default group", "account_created")
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`{"message": "Signup Successful"}`))
 	slog.Info("user registered with email: ", email)

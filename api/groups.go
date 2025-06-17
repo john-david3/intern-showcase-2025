@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"intern-showcase-2025/db"
 	"intern-showcase-2025/utils"
@@ -66,7 +67,6 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsonMap, err := json.Marshal(groupMap)
-	w.WriteHeader(http.StatusOK)
 	w.Write(jsonMap)
 }
 
@@ -310,4 +310,146 @@ func JoinRandomGroup(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`{"joined_group": "true"}`))
 	slog.Info("group joined", "group", groups[randIndex][0])
 
+}
+
+func AddDefaultGroup(email, defaultGroup string) bool {
+	slog.Info("attempting to add default group")
+	err := db.CreateConnection()
+	if err != nil {
+		slog.Error("error creating connection")
+		return false
+	}
+	defer db.CloseConnection()
+
+	// Check if office group already exists
+	groups, err := fetchGroups(defaultGroup)
+	if err != nil {
+		slog.Error("error fetching groups")
+		return false
+	}
+
+	// If not create it, and then add the user to that group
+	if len(groups) == 0 {
+		desc := "Group for " + defaultGroup + " office"
+		code, err := utils.GenerateCode(false)
+		if err != nil {
+			slog.Error("error generating code")
+			return false
+		}
+
+		err = db.Execute(
+			"INSERT INTO groups(name, description, code, isRandom) VALUES(?, ?, ?, ?);",
+			defaultGroup, desc, code, false,
+		)
+		if err != nil {
+			slog.Error("error inserting default group")
+			return false
+		}
+	}
+
+	// If it does, add the user to that group
+	groups, err = fetchGroups(defaultGroup)
+	if err != nil {
+		return false
+	}
+
+	users, err := fetchUserId(email)
+	if err != nil {
+		return false
+	}
+
+	err = db.Execute("INSERT INTO group_contains(uid, gid) VALUES(?, ?);", users[0][0], groups[0][0])
+	if err != nil {
+		slog.Error("error inserting default group")
+		return false
+	}
+
+	slog.Info("default group has been added")
+	return true
+}
+
+func GetGroupInfo(w http.ResponseWriter, r *http.Request) {
+	utils.CheckMethod(r, w, http.MethodPost)
+
+	// Retrieve the users current session
+	slog.Info("attempting to get group info")
+	userId := r.Header.Get("X-User-ID")
+	if userId == "" {
+		utils.SendErrorResponse(w, fmt.Errorf("missing user_id"), "missing user ID from header", "group_loaded")
+		return
+	}
+	groupId := r.FormValue("group_id")
+
+	// Retrieve the users groups
+	err := db.CreateConnection()
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error creating connection", "group_loaded")
+		return
+	}
+	defer db.CloseConnection()
+
+	rows, err := db.Fetch(`
+				SELECT name, description, code
+				FROM groups
+				WHERE gid = ?;`,
+		groupId,
+	)
+	defer rows.Close()
+
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error getting group", "group_loaded")
+		return
+	}
+
+	var groups [][]string
+	for rows.Next() {
+		group, err := db.DBRowToStringList(rows)
+		if err != nil || len(group) == 0 {
+			utils.SendErrorResponse(w, err, "error converting groups", "group_loaded")
+			return
+		}
+		groups = append(groups, group)
+	}
+
+	groupMap := map[string][]string{}
+	groupMap["data"] = groups[0]
+
+	jsonMap, err := json.Marshal(groupMap)
+	w.Write(jsonMap)
+}
+
+func fetchGroups(defaultGroup string) ([][]string, error) {
+	rows, err := db.Fetch("SELECT gid FROM groups WHERE name = ?;", defaultGroup)
+	if err != nil {
+		return nil, errors.New("error getting groups")
+	}
+
+	var groups [][]string
+	for rows.Next() {
+		group, err := db.DBRowToStringList(rows)
+		if err != nil {
+			return nil, errors.New("error converting groups")
+		}
+		groups = append(groups, group)
+	}
+
+	return groups, nil
+}
+
+func fetchUserId(email string) ([][]string, error) {
+	rows, err := db.Fetch("SELECT uid FROM users WHERE email = ?;", email)
+	if err != nil {
+		return nil, errors.New("error getting user")
+	}
+
+	var users [][]string
+	for rows.Next() {
+		user, err := db.DBRowToStringList(rows)
+		if err != nil {
+			return nil, errors.New("error converting groups")
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
 }

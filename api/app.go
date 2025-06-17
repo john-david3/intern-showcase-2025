@@ -21,6 +21,7 @@ func Run() {
 
 	// Group information
 	mux.HandleFunc("/api/wheel_info", GetOptions)
+	mux.HandleFunc("/api/get_group_info", GetGroupInfo)
 
 	handlerWithMiddleware := utils.CORSMiddleware(mux)
 
