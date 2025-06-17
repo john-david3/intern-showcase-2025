@@ -29,14 +29,12 @@ const GroupX = () => {
         fetchGroupInfo();
     }, []);
 
-
-
     return (
         <>
             <section>
-                <h2>{groupInfo ? groupInfo : ["data"][0]}</h2>
-                <p>{groupInfo ? groupInfo : ["data"][1]}</p>
-                <p>Code: {groupInfo ? groupInfo : ["data"][2]}</p>
+                <h2>{groupInfo ? groupInfo["data"][0] : "data"}</h2>
+                <p>Description: {groupInfo ? groupInfo["data"][1] : "data"}</p>
+                <p>Code: {groupInfo ? groupInfo["data"][2] : "data"}</p>
             </section>
 
             <section>

@@ -2,14 +2,14 @@ import {useState, type SetStateAction} from "react";
 import SimpleWheel from "./SimpleWheel.tsx";
 
 const DEFAULT_OPTIONS = [
-    {option: 'Five Points', category: 'Sandwiches', distance: 5, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {option: 'Sonnies Deli', category: 'Sandwiches', distance: 3, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
-    {option: 'English Market', category: 'Sandwiches', distance: 8, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {option: 'Boojum', category: 'Mexican', distance: 4, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
-    {option: 'Centra', category: 'Everything', distance: 6, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {option: 'Scoozis', category: 'Italian', distance: 2, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
-    {option: 'Marina Market', category: 'Everything', distance: 3, style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
-    {option: 'Grumpy Baker', category: 'Sandwiches', distance: 2, style: {backgroundColor: '#f5f5f5', color: '#000000'}},
+    {option: 'Five Points', category: 'Sandwiches', style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
+    {option: 'Sonnies Deli', category: 'Sandwiches', style: {backgroundColor: '#f5f5f5', color: '#000000'}},
+    {option: 'English Market', category: 'Sandwiches', style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
+    {option: 'Boojum', category: 'Mexican', style: {backgroundColor: '#f5f5f5', color: '#000000'}},
+    {option: 'Centra', category: 'Everything', style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
+    {option: 'Scoozis', category: 'Italian', style: {backgroundColor: '#f5f5f5', color: '#000000'}},
+    {option: 'Marina Market', category: 'Everything', style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
+    {option: 'Grumpy Baker', category: 'Sandwiches', style: {backgroundColor: '#f5f5f5', color: '#000000'}},
 ];
 
 const CATEGORIES = ['All', 'Sandwiches', 'Mexican', 'Italian', 'Everything'];
@@ -18,7 +18,6 @@ function Wheel() {
     const [options, setOptions] = useState(DEFAULT_OPTIONS);
     const [selectedOption, setSelectedOption] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('All');
-    const [maxDistance, setMaxDistance] = useState('all');
     const [excludedOptions, setExcludedOptions] = useState(new Set());
 
     // Filter options based on category, distance, and exclusions
@@ -27,10 +26,6 @@ function Wheel() {
 
         if (selectedCategory !== 'All') {
             filtered = filtered.filter(option => option.category === selectedCategory);
-        }
-
-        if (maxDistance !== 'all') {
-            filtered = filtered.filter(option => option.distance <= Number(maxDistance));
         }
 
         // Remove excluded options
@@ -45,15 +40,22 @@ function Wheel() {
 
     const handleAddOption = (e) => {
         e.preventDefault();
-        const { newOption, newCategory, newDistance } = e.target;
+        const formData = new FormData(e.target);
+        const newOption = formData.get("newOption");
+        const newCategory = formData.get("newCategory");
 
-        if (newOption && !options.some(opt => opt.option === newOption)) {
+        if (newOption) {
             const newStyle = options.length % 2 === 0
                 ? { backgroundColor: '#ff0000', color: '#f5f5f5' }
                 : { backgroundColor: '#f5f5f5', color: '#000000' };
-            setOptions([...options, { option: newOption, category: newCategory, distance: newDistance, style: newStyle }]);
+            setOptions([
+                ...options, {
+                option: newOption,
+                category: newCategory,
+                style: newStyle
+            }]);
         }
-        // @ts-ignore
+
         e.target.reset();
     };
 
@@ -79,7 +81,6 @@ function Wheel() {
         setSelectedOption(null);
         setExcludedOptions(new Set());
         setSelectedCategory('All');
-        setMaxDistance('all');
     };
 
     const filteredOptions = getFilteredOptions();
@@ -147,12 +148,12 @@ function Wheel() {
                 <form onSubmit={handleAddOption}>
                     <input
                         type="text"
-                        name="food"
+                        name="newOption"
                         placeholder="Enter a food"
                         required
                     />
 
-                    <select name="category" required>
+                    <select name="newCategory" required>
                         {CATEGORIES.slice(1).map(category => (
                             <option key={category} value={category}>{category}</option>
                         ))}
