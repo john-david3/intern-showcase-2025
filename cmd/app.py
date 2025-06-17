@@ -215,7 +215,6 @@ def get_group_info(group_id):
     if not user_id:
         return jsonify({"error": "user not logged in"}), 401
 
-    print("GROUP_ID", group_id)
     headers = {
         "X-User-ID": str(user_id),
     }
@@ -226,7 +225,6 @@ def get_group_info(group_id):
 
     try:
         r = requests.post("http://localhost:8080/api/get_group_info", data=send_data, headers=headers)
-        print("R", r)
         return r.json()
     except Exception:
         print("Failed to get group info")

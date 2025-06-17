@@ -1,10 +1,11 @@
 import {useEffect, useState} from "react";
 import AuthCheck from "../components/Auth/AuthCheck";
 import {useParams} from "react-router-dom";
+import Wheel from "../components/Wheel/Wheel.tsx";
 
 
 const GroupX = () => {
-    const [groupData, setGroupData] = useState<string[]>([]);
+    const [groupInfo, setGroupInfo] = useState<Map<string, string[]>>();
     const { gid } = useParams();
 
     <AuthCheck />
@@ -16,10 +17,10 @@ const GroupX = () => {
                     credentials: "include"
                 });
                 if (!response.ok) throw new Error("Failed to fetch group info");
-                const data: Record<string, string[]> = await response.json();
+                const data: Map<string, string[]> = await response.json();
                 console.log(data);
 
-                setGroupData(data);
+                setGroupInfo(data);
             } catch (error) {
                 console.error("Error fetching groups: ", error);
             }
@@ -31,11 +32,17 @@ const GroupX = () => {
 
 
     return (
-        <section>
-            <h2>{groupData["data"][0]}</h2>
-            <p>{groupData["data"][1]}</p>
-            <p>Code: {groupData["data"][2]}</p>
-        </section>
+        <>
+            <section>
+                <h2>{groupInfo ? groupInfo : ["data"][0]}</h2>
+                <p>{groupInfo ? groupInfo : ["data"][1]}</p>
+                <p>Code: {groupInfo ? groupInfo : ["data"][2]}</p>
+            </section>
+
+            <section>
+                <Wheel />
+            </section>
+        </>
     )
 }
 
