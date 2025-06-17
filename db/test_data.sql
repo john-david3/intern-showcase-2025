@@ -43,16 +43,22 @@ WHERE
 
 
 -- DA WHEEL --
-SELECT w.option
-FROM
-    groups AS g
-INNER JOIN
-    group_wheel AS gw
-ON
-    g.gid = gw.gid
-INNER JOIN
-    wheel_options AS w
-ON
-    gw.wid = w.wid
-WHERE
-    g.gid = 1;
+INSERT INTO wheel_options(option, category)
+VALUES
+    ('5 Points', 'Sandwich'),
+    ('Sonnies Deli', 'Sandwich'),
+    ('English Market', 'Variety');
+
+INSERT INTO group_wheel (gid, option)
+VALUES
+    (1, '5 Points'),
+    (1, 'Sonnies Deli'),
+    (1, 'English Market');
+
+SELECT w.category
+FROM groups AS g
+INNER JOIN group_wheel AS gw
+ON g.gid = gw.gid
+INNER JOIN wheel_options AS w
+ON gw.option = w.option
+WHERE g.gid = '1';
