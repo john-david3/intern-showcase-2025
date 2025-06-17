@@ -130,13 +130,42 @@ const SignupForm = () => {
                 {errors.location && (
                     <p>{errors.location}</p>
                 )}
-                <input
-                    name="location"
-                    type="text"
-                    placeholder="Enter Office Location"
-                    onChange={handleInputChange}
-                    value={formData.location}
-                />
+                <select name="location" onChange={handleInputChange}>
+                    <option>Seattle, WA, USA</option>
+                    <option>Australia</option>
+                    <option>Bangalore, India</option>
+                    <option>Barcelona, Spain</option>
+                    <option>Boulder, CO, USA</option>
+                    <option>Brazil</option>
+                    <option>Chertsey, UK</option>
+                    <option>China</option>
+                    <option>Czech Republic</option>
+                    <option>France</option>
+                    <option>Germany</option>
+                    <option>Hyderabad, India</option>
+                    <option>Ireland</option>
+                    <option>Israel</option>
+                    <option>Italy</option>
+                    <option>Japan</option>
+                    <option>London, UK</option>
+                    <option>Madrid, Spain</option>
+                    <option>Malaysia</option>
+                    <option>Mexico</option>
+                    <option>Mumbai, India</option>
+                    <option>Netherlands</option>
+                    <option>New Delhi, India</option>
+                    <option>New Zealand</option>
+                    <option>Philippines</option>
+                    <option>Poland</option>
+                    <option>Qatar</option>
+                    <option>San Jose, CA, USA</option>
+                    <option>Singapore</option>
+                    <option>South Korea</option>
+                    <option>Thailand</option>
+                    <option>Toronto, ON, Canada</option>
+                    <option>UAE</option>
+                    <option>Vietnam</option>
+                </select>
 
                 <button type="submit">Signup</button>
             </form>

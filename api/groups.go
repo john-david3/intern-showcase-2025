@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"intern-showcase-2025/db"
 	"intern-showcase-2025/utils"
@@ -310,4 +311,96 @@ func JoinRandomGroup(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`{"joined_group": "true"}`))
 	slog.Info("group joined", "group", groups[randIndex][0])
 
+}
+
+func AddDefaultGroup(email, defaultGroup string) bool {
+	slog.Info("attempting to add default group")
+	err := db.CreateConnection()
+	if err != nil {
+		slog.Error("error creating connection")
+		return false
+	}
+	defer db.CloseConnection()
+
+	// Check if office group already exists
+	groups, err := fetchGroups(defaultGroup)
+	if err != nil {
+		slog.Error("error fetching groups")
+		return false
+	}
+
+	// If not create it, and then add the user to that group
+	if len(groups) == 0 {
+		desc := "Group for " + defaultGroup + " office"
+		code, err := utils.GenerateCode(false)
+		if err != nil {
+			slog.Error("error generating code")
+			return false
+		}
+
+		err = db.Execute(
+			"INSERT INTO groups(name, description, code, isRandom) VALUES(?, ?, ?, ?);",
+			defaultGroup, desc, code, false,
+		)
+		if err != nil {
+			slog.Error("error inserting default group")
+			return false
+		}
+	}
+
+	// If it does, add the user to that group
+	groups, err = fetchGroups(defaultGroup)
+	if err != nil {
+		return false
+	}
+
+	users, err := fetchUserId(email)
+	if err != nil {
+		return false
+	}
+
+	err = db.Execute("INSERT INTO group_contains(uid, gid) VALUES(?, ?);", users[0][0], groups[0][0])
+	if err != nil {
+		slog.Error("error inserting default group")
+		return false
+	}
+
+	slog.Info("default group has been added")
+	return true
+}
+
+func fetchGroups(defaultGroup string) ([][]string, error) {
+	rows, err := db.Fetch("SELECT gid FROM groups WHERE name = ?;", defaultGroup)
+	if err != nil {
+		return nil, errors.New("error getting groups")
+	}
+
+	var groups [][]string
+	for rows.Next() {
+		group, err := db.DBRowToStringList(rows)
+		if err != nil {
+			return nil, errors.New("error converting groups")
+		}
+		groups = append(groups, group)
+	}
+
+	return groups, nil
+}
+
+func fetchUserId(email string) ([][]string, error) {
+	rows, err := db.Fetch("SELECT uid FROM users WHERE email = ?;", email)
+	if err != nil {
+		return nil, errors.New("error getting user")
+	}
+
+	var users [][]string
+	for rows.Next() {
+		user, err := db.DBRowToStringList(rows)
+		if err != nil {
+			return nil, errors.New("error converting groups")
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
 }
