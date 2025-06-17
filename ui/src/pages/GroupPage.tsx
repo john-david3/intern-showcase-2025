@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import AuthCheck from "../components/Auth/AuthCheck";
+import {Link} from "react-router-dom";
 
 
 const GroupPage = () => {
@@ -23,7 +24,7 @@ const GroupPage = () => {
             }
         };
 
-        fetchUserGroups();  // Always try
+        fetchUserGroups();
     }, []);
 
 
@@ -34,7 +35,9 @@ const GroupPage = () => {
             <ul>
                 {Object.entries(groupData).map(([key, values]) => (
                     <li key={key}>
-                        {values[0]}) <strong>{values[1]}</strong>: {values[2]}
+                        <Link to={`/group/${values[0]}`}>
+                            {values[0]}) <strong>{values[1]}</strong>: {values[2]}
+                        </Link>
                     </li>
                 ))}
             </ul>

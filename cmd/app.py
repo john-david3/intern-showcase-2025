@@ -209,6 +209,28 @@ def get_wheel_info(group_id: str) -> requests.Response | None:
         print("Failed to get wheel information")
         return None
 
+@app.route("/get_group_info/<string:group_id>", methods=["GET", "POST"])
+def get_group_info(group_id):
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user not logged in"}), 401
+
+    print("GROUP_ID", group_id)
+    headers = {
+        "X-User-ID": str(user_id),
+    }
+
+    send_data = {
+            "group_id": group_id
+    }
+
+    try:
+        r = requests.post("http://localhost:8080/api/get_group_info", data=send_data, headers=headers)
+        print("R", r)
+        return r.json()
+    except Exception:
+        print("Failed to get group info")
+        return None
 
 # SESSION ROUTES
 @app.route("/session_status", methods=["GET"])

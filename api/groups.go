@@ -67,7 +67,6 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsonMap, err := json.Marshal(groupMap)
-	w.WriteHeader(http.StatusOK)
 	w.Write(jsonMap)
 }
 
@@ -367,6 +366,56 @@ func AddDefaultGroup(email, defaultGroup string) bool {
 
 	slog.Info("default group has been added")
 	return true
+}
+
+func GetGroupInfo(w http.ResponseWriter, r *http.Request) {
+	utils.CheckMethod(r, w, http.MethodPost)
+
+	// Retrieve the users current session
+	slog.Info("attempting to get group info")
+	userId := r.Header.Get("X-User-ID")
+	if userId == "" {
+		utils.SendErrorResponse(w, fmt.Errorf("missing user_id"), "missing user ID from header", "group_loaded")
+		return
+	}
+	groupId := r.FormValue("group_id")
+
+	// Retrieve the users groups
+	err := db.CreateConnection()
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error creating connection", "group_loaded")
+		return
+	}
+	defer db.CloseConnection()
+
+	rows, err := db.Fetch(`
+				SELECT name, description, code
+				FROM groups
+				WHERE gid = ?;`,
+		groupId,
+	)
+	defer rows.Close()
+
+	if err != nil {
+		utils.SendErrorResponse(w, err, "error getting group", "group_loaded")
+		return
+	}
+
+	var groups [][]string
+	for rows.Next() {
+		group, err := db.DBRowToStringList(rows)
+		if err != nil || len(group) == 0 {
+			utils.SendErrorResponse(w, err, "error converting groups", "group_loaded")
+			return
+		}
+		groups = append(groups, group)
+	}
+
+	groupMap := map[string][]string{}
+	groupMap["data"] = groups[0]
+
+	jsonMap, err := json.Marshal(groupMap)
+	w.Write(jsonMap)
 }
 
 func fetchGroups(defaultGroup string) ([][]string, error) {
