@@ -23,6 +23,9 @@ func Run() {
 	mux.HandleFunc("/api/wheel_info", GetOptions)
 	mux.HandleFunc("/api/get_group_info", GetGroupInfo)
 
+	// Chat
+	mux.HandleFunc("/api/chat", messageHandler)
+
 	handlerWithMiddleware := utils.CORSMiddleware(mux)
 
 	slog.Info("server running on http://localhost:8080")
