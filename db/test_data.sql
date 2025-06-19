@@ -12,6 +12,9 @@ VALUES ('admin', 'group for admins', '00000000');
 INSERT INTO groups (name, description, code)
 VALUES ('wow', 'what a great group', '00000001');
 
+INSERT INTO groups (name, description, code, isRandom)
+VALUES ('random group', 'this is a random group', 63958371, 1);
+
 INSERT INTO group_contains (uid, gid)
 VALUES
     (1, 1),

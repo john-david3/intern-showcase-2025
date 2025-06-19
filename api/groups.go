@@ -265,6 +265,7 @@ func JoinRandomGroup(w http.ResponseWriter, r *http.Request) {
 		groups = append(groups, group)
 	}
 
+	fmt.Println(groups, len(groups))
 	if len(groups) == 0 {
 		utils.SendErrorResponse(w, fmt.Errorf("no groups found"), "no groups found", "joined_group")
 		return

@@ -7,7 +7,6 @@ import GroupX from "./pages/GroupX.tsx"
 import CreateGroup from "./components/Groups/CreateGroup.tsx"
 import JoinGroup from "./components/Groups/JoinGroup.tsx";
 import JoinRandomGroup from "./components/Groups/JoinRandomGroup.tsx";
-import Wheel from "./components/Wheel/Wheel.tsx";
 
 function App() {
   return (
