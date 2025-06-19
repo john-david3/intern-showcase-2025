@@ -11,7 +11,7 @@ import (
 
 func SendErrorResponse(w http.ResponseWriter, err error, message string, responseKey string) {
 	slog.Error(message, "error", err)
-	response := fmt.Sprintf(`{"message": "%s"}`, responseKey)
+	response := fmt.Sprintf(`{"%s": false}`, responseKey)
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write([]byte(response))
 }

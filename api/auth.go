@@ -14,6 +14,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	utils.CheckMethod(r, w, http.MethodPost)
 
 	email := r.FormValue("email")
+	fname := r.FormValue("fname")
+	lname := r.FormValue("lname")
 	password := r.FormValue("password")
 	password2 := r.FormValue("password2")
 	location := r.FormValue("location")
@@ -46,7 +48,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hashedPassword, _ := utils.HashData(password)
-	err = db.Execute("INSERT INTO users (email, password, location) VALUES (?, ?, ?)", email, hashedPassword, location)
+	err = db.Execute("INSERT INTO users (email, fname, lname, password, location) VALUES (?, ?, ?, ?, ?)", email, fname, lname, hashedPassword, location)
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error inserting user", "account_created")
 		return
