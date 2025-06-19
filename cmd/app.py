@@ -19,12 +19,16 @@ def signup():
     
     data = request.get_json()
     email = data.get("email")
+    fname = data.get("fname")
+    lname = data.get("lname")
     password = data.get("password")
     password2 = data.get("password2")
     location = data.get("location")
 
     send_data = {
         "email": email,
+        "fname": fname,
+        "lname": lname,
         "password": password,
         "password2": password2,
         "location": location
