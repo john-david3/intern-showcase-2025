@@ -7,7 +7,7 @@ import GroupX from "./pages/GroupX.tsx"
 import CreateGroup from "./components/Groups/CreateGroup.tsx"
 import JoinGroup from "./components/Groups/JoinGroup.tsx";
 import JoinRandomGroup from "./components/Groups/JoinRandomGroup.tsx";
-import Wheel from "./components/Wheel/Wheel.tsx";
+import ChatForm from "./components/Chat/Chat.tsx";
 
 function App() {
   return (
@@ -18,7 +18,8 @@ function App() {
             <Link to="/groups">Group Page</Link> |{" "}
             <Link to="/create_group">Create a Group</Link> |{" "}
             <Link to="/join_group">Join a Group</Link> |{" "}
-            <Link to="/join_random_group">Join a Random Group</Link>
+            <Link to="/join_random_group">Join a Random Group</Link> |{" "}
+            <Link to="/chat">Chat</Link>
         </nav>
 
         <section>
@@ -30,6 +31,7 @@ function App() {
                 <Route path="/create_group" element={<CreateGroup />} />
                 <Route path="/join_group" element={<JoinGroup />} />
                 <Route path="/join_random_group" element={<JoinRandomGroup />} />
+                <Route path="/chat" element={<ChatForm />} />
                 <Route path="/" element={<h1>Welcome! Choose a page above.</h1>} />
             </Routes>
         </section>

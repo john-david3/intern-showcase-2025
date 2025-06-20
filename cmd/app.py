@@ -1,6 +1,7 @@
 from flask import Flask, session, request, jsonify
 from flask_session import Session
 from flask_cors import CORS
+from flask_socketio import emit, join_room, leave_room, SocketIO
 import requests
 
 app = Flask(__name__)
@@ -10,6 +11,12 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
 
+socketio = SocketIO(
+    cors_allowed_origins="*",
+    async_mode="gevent",
+    ping_timeout=5000,
+    ping_interval=25000
+)
 
 # AUTHENTICATION ROUTES
 @app.route("/signup", methods=["GET", "POST"])
@@ -229,6 +236,61 @@ def get_group_info(group_id):
     except Exception:
         print("Failed to get group info")
         return None
+
+# CHAT ROUTES
+@socketio.on("connect")
+def handle_connection() -> None:
+    print("Client Connected to Chat")
+
+@socketio.on("join")
+def handle_join(data) -> None:
+    group_id = data.get("group_id")
+    user_id = session.get("user_id")
+
+    join_room(group_id)
+    emit("status", {
+        "message": f"Welcome to the chat for group {group_id}"
+    }, room=group_id)
+
+@socketio.on("leave")
+def handle_leave(data) -> None:
+    group_id = data.get("group_id")
+    user_id = session.get("user_id")
+
+    if group_id:
+        leave_room(group_id)
+        emit("status", {
+            "message": f"Leaving chat for group {group_id}"
+        }, room=group_id)
+
+@socketio.on("send_message")
+def send_message(data) -> None:
+    group_id = data.get("group_id")
+    message = data.get("message")
+    user_id = session.get("user_id")
+    
+    if not all([group_id, message, user_id]):
+        emit("error", {
+            "error": f"Unable to send a chat with info: group_id: {group_id}, user_id: {user_id}, message: {message}"  
+        })
+        return
+    
+    # Get the email
+    headers = {
+        "X-User-ID": str(user_id),
+    }
+
+    try:
+        email = requests.post("http://localhost:8080/api/wheel_info", headers=headers)
+    except Exception:
+        print("Failed to get user email")
+        return None
+    
+    emit("new_message", {
+        "user_id": user_id,
+        "email": email,
+        "message": message
+    }, room=group_id)
 
 # SESSION ROUTES
 @app.route("/session_status", methods=["GET"])

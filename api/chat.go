@@ -32,7 +32,7 @@ func messageHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Echo the message back to the client
-		slog.Info("Received: %s\\n", message)
+		slog.Info("Received: \n", message)
 		if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
 			slog.Error("Error writing message:", "error", err)
 			break
