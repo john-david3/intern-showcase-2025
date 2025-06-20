@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSocket } from "../contexts/SocketContext.tsx";
 
 interface ChatFormData {
     message: string;
@@ -9,10 +10,9 @@ interface FormErrors {
     general?: string;
 }
 
-const ChatForm = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    const [errors, setErrors] = useState<FormErrors>({});
-
+const ChatForm = ({ groupId }: {groupId: string}) => {
+    const { socket, isConnected } = useSocket();
+    const [ errors, setErrors ] = useState<FormErrors>({});
     const [formData, setFormData] = useState<ChatFormData>({message: ""});
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,11 +27,9 @@ const ChatForm = () => {
         const newErrors: FormErrors = {};
 
         // Check for empty fields
-        Object.keys(formData).forEach((key) => {
-            if (!formData[key as keyof ChatFormData]) {
-                newErrors[key as keyof FormErrors] = "This field is required";
-            }
-        });
+        if (!formData.message) {
+            newErrors.message = "This field is required";
+        }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -40,32 +38,17 @@ const ChatForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (validateForm()) {
-            try {
-                const response = await fetch("http://localhost:5000/chat", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    credentials: "include",
-                    body: JSON.stringify(formData),
-                });
+        if (!validateForm()) return;
 
-                const data = await response.json();
-
-                if (data) {
-                    console.log("Chat sent!");
-                    setIsLoggedIn(true);
-                } else {
-                    console.log("Failed to send chat.");
-                    setIsLoggedIn(false);
-                }
-            } catch (error) {
-                console.error("Error Chatting:", error);
-                setErrors({
-                    general: "An error occurred during chatting",
-                });
-            }
+        if (socket && isConnected) {
+            socket.emit("send_message", {
+                group_id: groupId,
+                message: formData.message,
+            });
+            setFormData({ message: ""})
+        } else {
+            console.error("Socket not connected");
+            setErrors({ general: "Socket connection lost"});
         }
     };
 
