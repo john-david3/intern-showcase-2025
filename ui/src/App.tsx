@@ -7,7 +7,7 @@ import GroupX from "./pages/GroupX.tsx"
 import CreateGroup from "./components/Groups/CreateGroup.tsx"
 import JoinGroup from "./components/Groups/JoinGroup.tsx";
 import JoinRandomGroup from "./components/Groups/JoinRandomGroup.tsx";
-import ChatForm from "./components/Chat/Chat.tsx";
+import ChatForm from "./components/Chat/ChatForm.tsx";
 import {SocketProvider} from "./contexts/SocketContext.tsx";
 
 function App() {

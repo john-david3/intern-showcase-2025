@@ -1,73 +1,35 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSocket } from "../../contexts/SocketContext.tsx";
 
-interface ChatFormData {
-    message: string;
-}
+const Chat = ({ groupId }) => {
+    const socket = useSocket();
+    const [messages, setMessages] = useState([]);
 
-interface FormErrors {
-    message?: string;
-    general?: string;
-}
+    useEffect(() => {
+        if (!socket) return;
 
-const ChatForm = ({ groupId }: {groupId: string}) => {
-    const { socket, isConnected } = useSocket();
-    const [ errors, setErrors ] = useState<FormErrors>({});
-    const [formData, setFormData] = useState<ChatFormData>({message: ""});
+        const handleNewMessage = (data) => {
+            setMessages((prev) => [...prev, data]);
+        };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
+        socket.emit("join", { group_id: groupId});
+        socket.on("new_message", handleNewMessage);
 
-    const validateForm = (): boolean => {
-        const newErrors: FormErrors = {};
-
-        // Check for empty fields
-        if (!formData.message) {
-            newErrors.message = "This field is required";
+        return () => {
+            socket.emit("leave", { group_id: groupId });
+            socket.on("new_message", handleNewMessage);
         }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!validateForm()) return;
-
-        if (socket && isConnected) {
-            socket.emit("send_message", {
-                group_id: groupId,
-                message: formData.message,
-            });
-            setFormData({ message: ""})
-        } else {
-            console.error("Socket not connected");
-            setErrors({ general: "Socket connection lost"});
-        }
-    };
+    }, [socket, groupId])
 
     return (
-        <section>
-            <h2>Chat</h2>
-            <form onSubmit={handleSubmit} id="chat">
-                <input
-                    name="message"
-                    type="text"
-                    placeholder="Enter Chat Message"
-                    onChange={handleInputChange}
-                    value={formData.message}
-                />
-
-                <button type="submit">Send Chat</button>
-            </form>
+        <section className="chat_window">
+            {messages.map((msg, idx) => (
+                <section key={idx}>
+                    <strong>{msg.email}:</strong> {msg.message}
+                </section>
+            ))}
         </section>
     );
 };
 
-export default ChatForm;
+export default Chat;
