@@ -28,7 +28,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
             socketRef.current.close();
         }
 
-        const newSocket = io("http://localhost:8080", {
+        const newSocket = io("http://localhost:5000", {
             path: "/socket.io/",
             transports: ["websocket"],
             withCredentials: true,

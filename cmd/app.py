@@ -12,10 +12,11 @@ Session(app)
 CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
 
 socketio = SocketIO(
-    cors_allowed_origins="*",
-    async_mode="gevent",
-    ping_timeout=5000,
-    ping_interval=25000
+    app,
+    cors_allowed_origins=["http://localhost:5173"],
+    async_mode="eventlet",
+    ping_timeout=5,
+    ping_interval=25
 )
 
 # AUTHENTICATION ROUTES
@@ -305,3 +306,6 @@ def session_status():
 # HELPER METHODS
 def is_logged_in(user_id):
     pass
+
+if __name__ == "__main__":
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)

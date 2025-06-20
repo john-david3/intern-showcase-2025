@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSocket } from "../contexts/SocketContext.tsx";
+import { useSocket } from "../../contexts/SocketContext.tsx";
 
 interface ChatFormData {
     message: string;

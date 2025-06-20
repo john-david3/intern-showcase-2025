@@ -8,6 +8,7 @@ import CreateGroup from "./components/Groups/CreateGroup.tsx"
 import JoinGroup from "./components/Groups/JoinGroup.tsx";
 import JoinRandomGroup from "./components/Groups/JoinRandomGroup.tsx";
 import ChatForm from "./components/Chat/Chat.tsx";
+import {SocketProvider} from "./contexts/SocketContext.tsx";
 
 function App() {
   return (
@@ -31,7 +32,7 @@ function App() {
                 <Route path="/create_group" element={<CreateGroup />} />
                 <Route path="/join_group" element={<JoinGroup />} />
                 <Route path="/join_random_group" element={<JoinRandomGroup />} />
-                <Route path="/chat" element={<ChatForm />} />
+                <Route path="/chat" element={<SocketProvider><ChatForm groupId={''} /></SocketProvider>} />
                 <Route path="/" element={<h1>Welcome! Choose a page above.</h1>} />
             </Routes>
         </section>
