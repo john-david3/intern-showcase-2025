@@ -1,20 +1,30 @@
 .header{
     display: flex;
+    flex-direction: column;
     align-items: center;
     padding: 1rem;
-    position: relative;
     border-bottom: 1px solid black;
+}
+
+.logo{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 0.5rem;
 }
 
 .logoImg{
     width: auto;
     height: 8rem;
+    display: block;
+    margin: 0 auto;
 }
 
 .menuBtn{
     display: none;
     background: none;
     border: none;
+    margin: 1rem auto;
 }
 
 .menuBtn:hover{
@@ -59,8 +69,15 @@
 
 .navmain {
     display: flex;
-    gap: 1rem;
+    justify-content: center;
     align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 0 1rem;
+    box-sizing: border-box;
 }
 
 nav ul{
@@ -84,15 +101,13 @@ nav a:hover{
     background-color: #f0f0f0;
 }
 
-
 @media (max-width: 1024px) {
     .navmain{
         display: none;
     }
     .menuBtn{
         display: block;
-        margin-left: auto;
-        margin-right: 1rem;
+        margin-left: 1rem;
     }
     .navbar{
         gap: 1rem;

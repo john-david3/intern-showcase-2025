@@ -1,6 +1,7 @@
 import {Link} from "react-router-dom";
 import {useState} from "react";
 import styles from './Navbar.module.css';
+import logo from '../../assets/f5connect.png'
 
 
 interface NavItem {
@@ -28,9 +29,9 @@ const Navbar = () => {
 
     return (
         <header className={styles.header}>
-            {/*<Link to={'/'}>*/}
-            {/*    <img src={logo} alt={"F5 Connect logo"} className={styles.logoImg} />*/}
-            {/*</Link>*/}
+            <Link to={'/'} className={styles.logo}>
+                <img src={logo} alt={"F5 Connect logo"} className={styles.logoImg} />
+            </Link>
             <button onClick={toggleMenu} className={styles.menuBtn}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="34px" viewBox="0 -960 960 960" width="34px" fill="#434343">
                     <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
