@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import styles from './Wheel.module.css';
 
 // Simple wheel component since react-spinning-wheel might not be available
 const SimpleWheel = ({items, onSpinComplete} ) => {
@@ -26,8 +27,8 @@ const SimpleWheel = ({items, onSpinComplete} ) => {
     const radius = 150; // Half of 300px wheel
 
     return (
-        <section>
-            <section id="pointer">
+        <section className={styles.simpleWheel}>
+            <section className={styles.pointer}>
                 <svg style={{
                         transform: `rotate(${rotation}deg)`,
                         transition: isSpinning ? 'transform 3s cubic-bezier(0.23, 1, 0.32, 1)' : 'none',
