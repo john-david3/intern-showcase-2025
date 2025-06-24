@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import AuthCheck from "../components/Auth/AuthCheck";
 import {useParams} from "react-router-dom";
 import Wheel from "../components/Wheel/Wheel.tsx";
-
+import Chat from "../components/Chat/Chat.tsx";
 
 const GroupX = () => {
     const [groupInfo, setGroupInfo] = useState<Map<string, string[]>>();
@@ -39,6 +39,12 @@ const GroupX = () => {
 
             <section>
                 <Wheel />
+            </section>
+
+            <section>
+                <p>1</p>
+                <Chat groupId={gid}></Chat>
+                <p>2</p>
             </section>
         </>
     )

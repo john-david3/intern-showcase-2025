@@ -269,7 +269,7 @@ def send_message(data) -> None:
     group_id = data.get("group_id")
     message = data.get("message")
     user_id = session.get("user_id")
-    
+
     if not all([group_id, message, user_id]):
         emit("error", {
             "error": f"Unable to send a chat with info: group_id: {group_id}, user_id: {user_id}, message: {message}"  
@@ -286,7 +286,7 @@ def send_message(data) -> None:
     except Exception:
         print("Failed to get user email")
         return None
-    
+
     emit("new_message", {
         "user_id": user_id,
         "email": email,
