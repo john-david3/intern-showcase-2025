@@ -2,18 +2,22 @@ import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
 interface RegisterFormData {
-    email: string;
-    password: string;
+    email:     string;
+    fname:     string;
+    lname:     string;
+    password:  string;
     password2: string;
-    location: string;
+    location:  string;
 }
 
 interface FormErrors {
-    email?: string;
-    password?: string;
+    email?:     string;
+    fname?:     string;
+    lname?:     string
+    password?:  string;
     password2?: string;
-    location?: string;
-    general?: string;
+    location?:  string;
+    general?:   string;
 }
 
 const SignupForm = () => {
@@ -21,10 +25,12 @@ const SignupForm = () => {
     const [errors, setErrors] = useState<FormErrors>({});
 
     const [formData, setFormData] = useState<RegisterFormData>({
-        email: "",
-        password: "",
+        email:     "",
+        fname:     "",
+        lname:     "",
+        password:  "",
         password2: "",
-        location: "",
+        location:  "",
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,6 +109,28 @@ const SignupForm = () => {
                     placeholder="Enter Email"
                     onChange={handleInputChange}
                     value={formData.email}
+                />
+
+                {errors.fname && (
+                    <p> {errors.fname}</p>
+                )}
+                <input
+                    name="fname"
+                    type="text"
+                    placeholder="Enter First Name"
+                    onChange={handleInputChange}
+                    value={formData.fname}
+                />
+
+                {errors.lname && (
+                    <p> {errors.lname}</p>
+                )}
+                <input
+                    name="lname"
+                    type="text"
+                    placeholder="Enter Last Name"
+                    onChange={handleInputChange}
+                    value={formData.lname}
                 />
 
                 {errors.password && (

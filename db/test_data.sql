@@ -1,6 +1,6 @@
 -- users table --
-INSERT INTO users (email, password, location)
-VALUES ('admin', 'admin', 'admin');
+INSERT INTO users (email, password, fname, lname, location)
+VALUES ('admin', 'admin', 'admin', 'admin', 'admin');
 
 SELECT * FROM users;
 
@@ -11,6 +11,9 @@ VALUES ('admin', 'group for admins', '00000000');
 
 INSERT INTO groups (name, description, code)
 VALUES ('wow', 'what a great group', '00000001');
+
+INSERT INTO groups (name, description, code, isRandom)
+VALUES ('random group', 'this is a random group', 63958371, 1);
 
 INSERT INTO group_contains (uid, gid)
 VALUES
