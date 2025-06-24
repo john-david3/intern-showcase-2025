@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import { useSocket } from "../../contexts/SocketContext.tsx";
 
+type Message = {
+    email: string;
+    message: string;
+}
+
 const Chat = ({ groupId }) => {
-    const socket = useSocket();
-    const [messages, setMessages] = useState([]);
+    const { socket, isConnected } = useSocket();
+    if (!isConnected || !socket) return;
+    console.log(socket);
+    const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {
         if (!socket) return;

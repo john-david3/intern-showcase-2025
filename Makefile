@@ -20,7 +20,7 @@ dev:
 
 serve:
 	@echo "Running flask server"
-	@flask run
+	@python3 cmd/app.py
 
 install-deps:
 	@pip3 install -r requirements.txt
