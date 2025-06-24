@@ -39,6 +39,7 @@ const Chat = ({ groupId }: { groupId: string }) => {
                     <strong>{msg.email}:</strong> {msg.message}
                 </section>
             ))}
+            <ChatForm groupId={groupId}></ChatForm>
         </section>
     );
 };
