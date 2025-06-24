@@ -34,8 +34,9 @@ const Chat = ({ groupId }: { groupId: string }) => {
 
     return (
         <section className="chat_window">
+            <h2>Chat</h2>
             {messages.map((msg, idx) => (
-                <section key={idx}>
+                <section className="chatBox" key={idx}>
                     <strong>{msg.email}:</strong> {msg.message}
                 </section>
             ))}

@@ -55,7 +55,6 @@ const ChatForm = ({ groupId }: {groupId: string}) => {
 
     return (
         <section>
-            <h2>Chat</h2>
             <form onSubmit={handleSubmit} id="chat">
                 <input
                     name="message"

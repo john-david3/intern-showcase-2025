@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"intern-showcase-2025/db"
 	"intern-showcase-2025/utils"
 	"log/slog"
@@ -39,6 +40,7 @@ func GetEmail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	email := emails[0][0]
-	w.Write([]byte(email))
+	msg := fmt.Sprintf(`%s`, email)
+	w.Write([]byte(msg))
 	slog.Info("email found", "email", email)
 }

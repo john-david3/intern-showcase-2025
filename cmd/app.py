@@ -270,6 +270,8 @@ def send_message(data) -> None:
     message = data.get("message")
     user_id = session.get("user_id")
 
+    print("JKLJKLJKL")
+
     if not all([group_id, message, user_id]):
         emit("error", {
             "error": f"Unable to send a chat with info: group_id: {group_id}, user_id: {user_id}, message: {message}"  
@@ -282,11 +284,14 @@ def send_message(data) -> None:
     }
 
     try:
-        email = requests.post("http://localhost:8080/api/wheel_info", headers=headers)
+        r = requests.post("http://localhost:8080/api/get_email", headers=headers)
     except Exception:
         print("Failed to get user email")
         return None
 
+    email = r.text
+
+    print(user_id, email, message, "AAA")
     emit("new_message", {
         "user_id": user_id,
         "email": email,
