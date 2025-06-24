@@ -1,0 +1,125 @@
+.officeLocation {
+    background-color: var(--background-other);
+    margin: 0.5rem;
+    padding: 1rem;
+    max-width: 100%;
+    color: var(--text);
+}
+
+.officeLocation h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+}
+
+.regions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+
+.regionCard {
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border: solid var(--accent-hover);
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    font-weight: bold;
+    transition: transform 0.2s ease;
+
+}
+
+.regionCard:hover{
+    border-color: var(--accent-pistachio);
+    color: var(--accent-pistachio);
+}
+
+.regionCard p {
+    background-color: var(--background-other);
+    padding: 1rem;
+}
+
+.selected {
+    margin-top: 1.5rem;
+    font-weight: bold;
+    color: green;
+}
+
+.selectorOverlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(250, 255, 250, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.selectorContainer{
+    background-color: var(--background);
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 60%;
+    height: 60%;
+    display: flex;
+    flex-direction: column;
+}
+
+.selectorContainer h1{
+    background-color: var(--background-other);
+    padding: 1rem;
+}
+
+.closeSelectorBtn{
+    border-radius: 2px;
+    padding: 0.2em 0.3em;
+    align-self: flex-end;
+    margin-bottom: 1rem;
+}
+
+.buttons{
+    border-radius: 2px;
+    padding: 0.2em 0.3em;
+    align-self: center;
+}
+
+.buttons button{
+    margin: 1rem;
+}
+
+.selectorContainer h1{
+    font-size: 1.4rem;
+    color: var(--text);
+    align-content: center;
+}
+
+
+.office {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    transition: background 0.2s;
+}
+
+.office:hover {
+    background-color: #efefef;
+}
+
+.officeImage {
+    width: 60px;
+    height: auto;
+    object-fit: cover;
+    border-right: 8px;
+}
