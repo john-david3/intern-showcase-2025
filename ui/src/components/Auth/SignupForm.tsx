@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import styles from "./Auth.module.css"
 
 interface RegisterFormData {
     email: string;
@@ -87,8 +88,7 @@ const SignupForm = () => {
     };
 
     return (
-        <section>
-            <h2>Signup</h2>
+        <section className={styles.authform}>
             <form onSubmit={handleSubmit} id="register-form">
                 {errors.general && (
                     <p>{errors.general}</p>

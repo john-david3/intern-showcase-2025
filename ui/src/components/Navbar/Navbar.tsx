@@ -13,11 +13,10 @@ const NavItems: NavItem[] = [
     { label: 'Home', href: '/' },
     { label: 'Groups', href: '/groups' },
     { label: 'Profile', href: '/profile' },
-    { label: 'Signup', href: '/signup' },
-    { label: 'Login', href: '/login' },
     { label: 'Create Group', href: '/create_group' },
     { label: 'Join Group', href: '/join_group' },
-    { label: 'Join Random Group', href: '/join_random_group' }
+    { label: 'Join Random Group', href: '/join_random_group' },
+    { label: 'Login|Signup', href: '/login_signup' }
 ];
 
 const Navbar = () => {
