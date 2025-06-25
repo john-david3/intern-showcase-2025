@@ -1,11 +1,15 @@
 import {useEffect, useState} from "react";
 import styles from "./OfficeLocation.module.css"
 import OfficeSelectorWindow from "./OfficeSelectorWindow.tsx";
+import americasImg from "../../assets/images/americas.png";
+import emeaImg from "../../assets/images/emea.png"
+import asiaImg from "../../assets/images/asia.png"
+
 
 export type Office = {
     id: number;
     region: string;
-    office: string;
+    officename: string;
     address: string;
     city: string;
     country: string;
@@ -18,6 +22,12 @@ type Region = {
     picture: string;
 }
 
+const regions: Region[] = [
+    { name: "Americas", picture: americasImg },
+    { name: "EMEA", picture: emeaImg },
+    { name: "Asia", picture: asiaImg }
+]
+
 const OfficeLocation = () => {
 
     const [offices, setOffices] = useState<Office[]>([]);
@@ -25,23 +35,14 @@ const OfficeLocation = () => {
     const [selectedOffice, setSelectedOffice] = useState<Office | null>(null);
     const [isSelectorOpen, setSelectorOpen] = useState(false);
 
-    const regions: Region[] = [
-        {
-            name: "Americas",
-            picture: "../../public/images/americas.png"
-        },
-        {
-            name: "EMEA",
-            picture: "../../public/images/emea.png"
-        },
-        {
-            name: "Asia",
-            picture: "../../public/images/asia.png"
-        }
-    ]
-
     useEffect(() => {
-        fetch('http://localhost:5000/offices').then(res => res.json()).then(setOffices);
+        fetch('http://localhost:5000/offices')
+            .then(res => res.json())
+            .then((data) =>{
+                console.log("Offices fetched: ", data);
+                setOffices(data);
+            })
+            .catch((err) => console.error("failed to load office information", err));
     }, []);
 
     const openSelector = (region: string) => {
@@ -63,18 +64,12 @@ const OfficeLocation = () => {
                     'Content-Type' : 'application/json'
                 },
                 body: JSON.stringify({ office_id: office.id})
-            })
+            }).catch((err) => console.error("Failed to update location", err));
         }
-        if (closeAfterSave) setSelectorOpen(false);
+        if (closeAfterSave) {
+            setSelectorOpen(false);
+        }
     }
-    //
-    // const handleOfficeClick = (office: Office) => {
-    //     setSelectedOffice(office);
-    //     fetch('http://localhost:5000/user/location', {
-    //         method: 'POST',
-    //         body: JSON.stringify({office_id: office.id})
-    //     });
-    // };
 
     return (
         <section className={styles.officeLocation}>
@@ -102,7 +97,7 @@ const OfficeLocation = () => {
 
             {selectedOffice && (
                 <p className={styles.selected}>
-                    Selected: <strong>{selectedOffice.office}</strong>, {selectedOffice.city}
+                    Selected: <strong>{selectedOffice.officename}</strong>
                 </p>
             )}
         </section>

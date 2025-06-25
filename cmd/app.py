@@ -239,6 +239,34 @@ def session_status():
     else:
         return jsonify({"logged_in": False})
 
+#Offices Routes
+@app.route("/offices", methods=["GET"])
+def get_offices():
+    try:
+        res = requests.get("http://localhost:8080/api/offices")
+        return jsonify(res.json()), 200
+    except Exception:
+        print("Failed to get offices info")
+        return None
+
+@app.route("/user/location", methods=["POST"])
+def update_user_location():
+    data = request.get_json()
+    if not data:
+        print("Error retrieving data")
+        return None
+
+    payload = {
+        "user_id": session.get("user_id"),
+        "office_id": data.get("office_id")
+    }
+
+    try:
+        res = requests.post("http://localhost:8080/api/update_user_location", json=payload)
+        return jsonify(res.json())
+    except Exception:
+        print("Failed to update location")
+        return None
 
 # HELPER METHODS
 def is_logged_in(user_id):

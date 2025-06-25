@@ -97,6 +97,7 @@
 
 .buttons button{
     margin: 1rem;
+    color: var(--text);
 }
 
 .selectorContainer h1{
@@ -122,4 +123,30 @@
     height: auto;
     object-fit: cover;
     border-right: 8px;
+}
+
+.officeList{
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.officeItem {
+    background-color: var(--accent-pistachio);
+    color: var(--background);
+    padding: 0.5rem;
+    border: 1px solid var(--background-other);
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.officeItem:hover{
+    background-color: var(--accent-beige);
+    color: var(--text-muted)
 }

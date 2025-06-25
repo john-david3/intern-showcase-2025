@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AuthCheck from "../Auth/AuthCheck.tsx";
+import styles from "./Groups.module.css"
 
 interface GroupFormData {
     name: string;
@@ -78,7 +79,7 @@ const CreateGroup = () => {
     };
 
     return (
-        <section>
+        <section className={styles.creategroup}>
             <h2>Create a Group</h2>
             <form onSubmit={handleSubmit} id="create-group-form">
                 {errors.general && (
@@ -89,6 +90,7 @@ const CreateGroup = () => {
                     <p> {errors.name}</p>
                 )}
                 <input
+                    className={styles.groupinput}
                     name="name"
                     type="text"
                     placeholder="Enter Group Name"
@@ -100,6 +102,7 @@ const CreateGroup = () => {
                     <p>{errors.desc}</p>
                 )}
                 <input
+                    className={styles.groupinput}
                     name="desc"
                     type="text"
                     placeholder="Enter Group Description"

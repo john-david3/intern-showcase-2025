@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import styles from "./Groups.module.css"
 
 const JoinRandomGroup = () => {
 
@@ -18,7 +19,11 @@ const JoinRandomGroup = () => {
         join_group()
     });
 
-    return null;
+    return (
+        <section className={styles.joinrandom}>
+            <h2>Join a Random Group</h2>
+        </section>
+    );
 };
 
 export default JoinRandomGroup;
