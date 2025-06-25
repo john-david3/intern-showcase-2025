@@ -1,5 +1,5 @@
 -- users table --
-INSERT INTO users (email, password, fname, lname, location)
+INSERT INTO users (detail, password, fname, lname, location)
 VALUES ('admin', 'admin', 'admin', 'admin', 'admin');
 
 SELECT * FROM users;

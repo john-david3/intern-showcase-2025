@@ -285,17 +285,19 @@ def send_message(data) -> None:
     }
 
     try:
-        r = requests.post("http://localhost:8080/api/get_email", headers=headers)
+        r = requests.post("http://localhost:8080/api/get_user_info", headers=headers)
     except Exception:
         print("Failed to get user email")
         return None
 
-    email = r.text
+    res = r.json()
+    fname = res["fname"]
+    lname = res["lname"]
+    name = fname + " " + lname[0]
 
-    print(user_id, email, message, "AAA")
     emit("new_message", {
         "user_id": user_id,
-        "email": email,
+        "name": name,
         "message": message
     }, room=group_id)
 

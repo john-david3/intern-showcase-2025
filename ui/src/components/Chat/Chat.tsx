@@ -3,7 +3,7 @@ import { useSocket } from "../../contexts/SocketContext.tsx";
 import ChatForm from "./ChatForm.tsx";
 
 type Message = {
-    email: string;
+    name: string;
     message: string;
 }
 
@@ -36,7 +36,7 @@ const Chat = ({ groupId }: { groupId: string }) => {
             <h2>Chat</h2>
             {messages.map((msg, idx) => (
                 <section className="chatBox" key={idx}>
-                    <strong>{msg.email}:</strong> {msg.message}
+                    <strong>{msg.name}:</strong> {msg.message}
                 </section>
             ))}
             <ChatForm groupId={groupId}></ChatForm>

@@ -24,7 +24,7 @@ func Run() {
 	mux.HandleFunc("/api/get_group_info", GetGroupInfo)
 
 	// Chat
-	mux.HandleFunc("/api/get_email", GetEmail)
+	mux.HandleFunc("/api/get_user_info", GetUserInfo)
 
 	handlerWithMiddleware := utils.CORSMiddleware(mux)
 

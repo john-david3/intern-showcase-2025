@@ -1,14 +1,14 @@
 package api
 
 import (
-	"fmt"
+	"encoding/json"
 	"intern-showcase-2025/db"
 	"intern-showcase-2025/utils"
 	"log/slog"
 	"net/http"
 )
 
-func GetEmail(w http.ResponseWriter, r *http.Request) {
+func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	slog.Info("Trying to get email")
 	if r.Method != http.MethodPost {
 		err := http.StatusMethodNotAllowed
@@ -23,24 +23,25 @@ func GetEmail(w http.ResponseWriter, r *http.Request) {
 	defer db.CloseConnection()
 
 	user_id := r.Header.Get("X-User-ID")
-	rows, err := db.Fetch("SELECT email FROM users WHERE uid = ?", user_id)
+	rows, err := db.Fetch("SELECT fname, lname FROM users WHERE uid = ?", user_id)
 	if err != nil {
 		utils.SendErrorResponse(w, err, "error fetching user", "got_email")
 		return
 	}
 
-	var emails [][]string
+	var details [][]string
 	for rows.Next() {
-		email, err := db.DBRowToStringList(rows)
+		detail, err := db.DBRowToStringList(rows)
 		if err != nil {
 			utils.SendErrorResponse(w, err, "error fetching user", "got_email")
 			return
 		}
-		emails = append(emails, email)
+		details = append(details, detail)
 	}
 
-	email := emails[0][0]
-	msg := fmt.Sprintf(`%s`, email)
-	w.Write([]byte(msg))
-	slog.Info("email found", "email", email)
+	username := details[0]
+	msg := map[string]string{"fname": username[0], "lname": username[1]}
+	msgMap, _ := json.Marshal(msg)
+	w.Write(msgMap)
+	slog.Info("user found", "user", username[0])
 }
