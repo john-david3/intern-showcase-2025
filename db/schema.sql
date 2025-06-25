@@ -3,6 +3,8 @@ CREATE TABLE users (
     uid INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(32) NOT NULL,
     email VARCHAR(128) NOT NULL,
+    fname VARCHAR(64) NOT NULL,
+    lname VARCHAR(64) NOT NULL,
     password VARCHAR(256) NOT NULL,
     location VARCHAR(64) NOT NULL
 );

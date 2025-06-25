@@ -19,12 +19,16 @@ def signup():
     
     data = request.get_json()
     email = data.get("email")
+    fname = data.get("fname")
+    lname = data.get("lname")
     password = data.get("password")
     password2 = data.get("password2")
     location = data.get("location")
 
     send_data = {
         "email": email,
+        "fname": fname,
+        "lname": lname,
         "password": password,
         "password2": password2,
         "location": location
@@ -157,11 +161,7 @@ def join_group():
 
 @app.route("/join_random_group", methods=["GET", "POST"])
 def join_random_group():
-    if not request.get_json():
-        return jsonify({"message": "Expected JSON data"}), 400
-
     user_id = session.get("user_id")
-
     headers = {
         "X-User-ID": str(user_id),
     }
@@ -169,6 +169,7 @@ def join_random_group():
     try:
         res = requests.post("http://localhost:8080/api/join_random_group", headers=headers)
         data = res.json()
+        print(data)
         return jsonify(data)
     except Exception:
         print("Failed to join random group")
