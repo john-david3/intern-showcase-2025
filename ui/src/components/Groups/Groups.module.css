@@ -86,3 +86,30 @@
     font-family: inherit;
     transition: box-shadow 0.3s ease;
 }
+
+.groupx{
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--accent-pistachio);
+    border-radius: 0.5rem;
+    background-color: var(--background-other);
+}
+
+.groupxInfo{
+    background-color: var(--background);
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 2rem;
+    align-items: center;
+}
+
+.groupx h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+}
+
+.groupx p {
+    margin: 0.25rem 0;
+    color: var(--text-muted);
+}
