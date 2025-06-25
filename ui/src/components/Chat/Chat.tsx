@@ -19,7 +19,6 @@ const Chat = ({ groupId }: { groupId: string }) => {
         if (!socket) return;
 
         const handleNewMessage = (data) => {
-            console.log("BOXBOX");
             setMessages((prev) => [...prev, data]);
         };
 

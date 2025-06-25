@@ -177,7 +177,7 @@ def join_random_group():
     try:
         res = requests.post("http://localhost:8080/api/join_random_group", headers=headers)
         data = res.json()
-        print(data)
+        print("RANDOM GROUP DATA", data)
         return jsonify(data)
     except Exception:
         print("Failed to join random group")

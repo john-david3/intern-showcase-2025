@@ -10,6 +10,7 @@ const JoinRandomGroup = () => {
                 const response = await fetch("http://localhost:5000/join_random_group", {
                     credentials: "include"
                 });
+                console.log("STATUS CHECKED")
                 if (!response.ok) throw new Error("Failed to join random group");
                 const data = await response.json();
                 if (data.joined_group == "true"){

@@ -258,14 +258,14 @@ func JoinRandomGroup(w http.ResponseWriter, r *http.Request) {
 	var groups [][]string
 	for rows.Next() {
 		group, err := db.DBRowToStringList(rows)
-		if err != nil || len(group) == 0 {
+		if err != nil {
 			utils.SendErrorResponse(w, err, "error converting groups", "joined_group")
 			return
 		}
 		groups = append(groups, group)
 	}
 
-	fmt.Println(groups, len(groups))
+	fmt.Println("Random Groups: ", groups, len(groups))
 	if len(groups) == 0 {
 		utils.SendErrorResponse(w, fmt.Errorf("no groups found"), "no groups found", "joined_group")
 		return
@@ -273,8 +273,10 @@ func JoinRandomGroup(w http.ResponseWriter, r *http.Request) {
 
 	found := false
 	var randIndex int
+	counter := -1
 
-	for !found {
+	for !found && counter < len(groups) {
+		counter++
 		randIndex = rand.Intn(len(groups))
 
 		rows, err = db.Fetch("SELECT gid FROM group_contains WHERE uid = ? AND gid = ?;", userId, groups[randIndex][0])
@@ -302,7 +304,7 @@ func JoinRandomGroup(w http.ResponseWriter, r *http.Request) {
 
 	// Add the user to the group
 	err = db.Execute(`INSERT INTO group_contains(uid, gid) VALUES(?, ?);`, userId, groups[randIndex][0])
-	if err != nil {
+	if err != nil || counter >= len(groups) {
 		utils.SendErrorResponse(w, err, "error joining group", "joined_group")
 		return
 	}
