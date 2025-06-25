@@ -19,8 +19,8 @@ function App() {
             <Link to="/groups">Group Page</Link> |{" "}
             <Link to="/create_group">Create a Group</Link> |{" "}
             <Link to="/join_group">Join a Group</Link> |{" "}
-            <Link to="/join_random_group">Join a Random Group</Link> |{" "}
-            <Link to="/chat">Chat</Link>
+            <Link to="/join_random_group">Join a Random Group</Link>
+            <Link to="/chat"></Link>
         </nav>
 
         <section>

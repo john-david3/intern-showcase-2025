@@ -42,9 +42,7 @@ const GroupX = () => {
             </section>
 
             <section>
-                <p>1</p>
                 <Chat groupId={gid}></Chat>
-                <p>2</p>
             </section>
         </>
     )
