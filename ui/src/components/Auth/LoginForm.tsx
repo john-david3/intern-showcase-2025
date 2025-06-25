@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import styles from "./Auth.module.css"
 
 interface LoginFormData {
     email: string;
@@ -75,9 +76,8 @@ const LoginForm = () => {
     };
 
     return (
-        <section>
-            <h2>Login</h2>
-            <p>Is logged in? : {isLoggedIn ? "Yes" : "No"}</p>
+        <section className={styles.authform}>
+            <p>{isLoggedIn ? "You are currently logged in." : "You are not logged in currently."}</p>
 
             <form onSubmit={handleSubmit} id="login-form">
                 {errors.general && (

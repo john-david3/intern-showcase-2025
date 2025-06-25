@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import styles from "./Groups.module.css"
 
 const JoinRandomGroup = () => {
     const [displayedResult, setdisplayedResult] = useState(false);
@@ -28,7 +29,8 @@ const JoinRandomGroup = () => {
     }, []);
 
     return (
-        <section>
+        <section className={styles.joinrandom}>
+            <h2>Join a Random Group</h2>
             <h1>{ displayedResult ? "Joined random group" : "Could not join random group" }</h1>
         </section>
     );

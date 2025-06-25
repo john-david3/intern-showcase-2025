@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AuthCheck from "../Auth/AuthCheck.tsx";
+import styles from "./Groups.module.css"
 
 interface JoinFormData {
     code: string;
@@ -74,7 +75,7 @@ const JoinGroup = () => {
     };
 
     return (
-        <section>
+        <section className={styles.joingroup}>
             <h2>Join a Group via Code</h2>
             <form onSubmit={handleSubmit} id="join-group-form">
                 {errors.general && (
@@ -85,6 +86,7 @@ const JoinGroup = () => {
                     <p> {errors.code}</p>
                 )}
                 <input
+                    className={styles.groupinput}
                     name="code"
                     type="text"
                     placeholder="Enter Code"

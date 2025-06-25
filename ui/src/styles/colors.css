@@ -1,0 +1,18 @@
+:root{
+    /* Accent Colours */
+    --accent-pistachio: #a6c48a;
+    --accent-beige: #f5e3c3;
+    --accent-hover: #f0f0f0;
+
+    /* Text Colours */
+    --text: #1a1a1a;
+    --text-muted: #555;
+
+    /* Base Colours*/
+    --background: white;
+    --background-other: #eaeaea;
+    --border: #3a3a3a;
+
+    /* Other */
+    --button: var(--accent-pistachio);
+}

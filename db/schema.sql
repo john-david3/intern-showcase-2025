@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     uid INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(32) NOT NULL,
     email VARCHAR(128) NOT NULL,
     fname VARCHAR(64) NOT NULL,
     lname VARCHAR(64) NOT NULL,
@@ -42,4 +43,16 @@ DROP TABLE IF EXISTS wheel_options;
 CREATE TABLE wheel_options(
     wid INTEGER,
     option VARCHAR(64)
+);
+
+DROP TABLE IF EXISTS offices;
+CREATE TABLE offices (
+    office_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    region          TEXT NOT NULL CHECK(region IN ('Americas', 'EMEA', 'Asia')),
+    office_name     TEXT NOT NULL,
+    address         TEXT NOT NULL,
+    city            TEXT NOT NULL,
+    country         TEXT NOT NULL,
+    postcode        TEXT NOT NULL,
+    picture         TEXT NOT NULL
 );
