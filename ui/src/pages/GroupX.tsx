@@ -3,7 +3,7 @@ import AuthCheck from "../components/Auth/AuthCheck";
 import {useParams} from "react-router-dom";
 import Wheel from "../components/Wheel/Wheel.tsx";
 import styles from "../components/Groups/Groups.module.css"
-
+import Chat from "../components/Chat/Chat.tsx";
 
 const GroupX = () => {
     const [groupInfo, setGroupInfo] = useState<Map<string, string[]>>();
@@ -40,6 +40,10 @@ const GroupX = () => {
 
             <section>
                 <Wheel />
+            </section>
+
+            <section>
+                <Chat groupId={gid}></Chat>
             </section>
         </section>
     )

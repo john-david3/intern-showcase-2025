@@ -50,3 +50,9 @@ h1 {
 h2{
     font-size: 1.5em;
 }
+
+.chat_window{
+    text-align: center;
+    background-color: #fff;
+    padding: 1em 1em 4em 1em;
+}

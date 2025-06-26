@@ -27,6 +27,9 @@ func Run() {
 	mux.HandleFunc("/api/offices", GetOffices)
 	mux.HandleFunc("/api/user/location", UpdateUserLocation)
 
+	// Chat
+	mux.HandleFunc("/api/get_user_info", GetUserInfo)
+
 	handlerWithMiddleware := utils.CORSMiddleware(mux)
 
 	slog.Info("server running on http://localhost:8080")

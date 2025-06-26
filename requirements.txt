@@ -3,3 +3,5 @@ Flask-Session==0.8.0
 Flask_CORS==5.0.0
 requests==2.32.3
 python-dotenv==1.0.1
+flask-socketio==5.5.1
+eventlet==0.40.0

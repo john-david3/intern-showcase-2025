@@ -11,9 +11,11 @@ const DEFAULT_OPTIONS = [
     {option: 'Scoozis', category: 'Italian', style: {backgroundColor: '#f5f5f5', color: '#000000'}},
     {option: 'Marina Market', category: 'Everything', style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
     {option: 'Grumpy Baker', category: 'Sandwiches', style: {backgroundColor: '#f5f5f5', color: '#000000'}},
+    {option: 'Wabisabi', category: 'Japanese', style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
+    {option: 'Priory', category: 'Coffee Shop', style: {backgroundColor: '#f5f5f5', color: '#000000'}},
 ];
 
-const CATEGORIES = ['All', 'Sandwiches', 'Mexican', 'Italian', 'Everything'];
+const CATEGORIES = ['All', 'Sandwiches', 'Mexican', 'Italian', 'Everything', 'Japanese', 'Coffee Shop'];
 
 function Wheel() {
     const [options, setOptions] = useState(DEFAULT_OPTIONS);
