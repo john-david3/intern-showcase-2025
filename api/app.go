@@ -23,6 +23,10 @@ func Run() {
 	mux.HandleFunc("/api/wheel_info", GetOptions)
 	mux.HandleFunc("/api/get_group_info", GetGroupInfo)
 
+	// Location
+	mux.HandleFunc("/api/offices", GetOffices)
+	mux.HandleFunc("/api/user/location", UpdateUserLocation)
+
 	// Chat
 	mux.HandleFunc("/api/get_user_info", GetUserInfo)
 

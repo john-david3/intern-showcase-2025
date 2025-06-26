@@ -43,3 +43,15 @@ CREATE TABLE wheel_options(
     wid INTEGER,
     option VARCHAR(64)
 );
+
+DROP TABLE IF EXISTS offices;
+CREATE TABLE offices (
+    office_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    region          TEXT NOT NULL CHECK(region IN ('Americas', 'EMEA', 'Asia')),
+    office_name     TEXT NOT NULL,
+    address         TEXT NOT NULL,
+    city            TEXT NOT NULL,
+    country         TEXT NOT NULL,
+    postcode        TEXT NOT NULL,
+    picture         TEXT NOT NULL
+);

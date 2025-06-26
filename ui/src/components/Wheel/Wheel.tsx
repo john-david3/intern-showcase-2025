@@ -1,5 +1,6 @@
 import {useState, type SetStateAction} from "react";
 import SimpleWheel from "./SimpleWheel.tsx";
+import styles from "./Wheel.module.css"
 
 const DEFAULT_OPTIONS = [
     {option: 'Five Points', category: 'Sandwiches', style: {backgroundColor: '#ff0000', color: '#f5f5f5'}},
@@ -88,7 +89,7 @@ function Wheel() {
     const filteredOptions = getFilteredOptions();
 
     return (
-        <section>
+        <section className={styles.foodwheel}>
             <section className="wheel">
                 <h2>Spin the Wheel of Food!</h2>
                 <label>Category:</label>
@@ -117,7 +118,7 @@ function Wheel() {
                 </section>
 
                 {selectedOption && (
-                    <section id="winner">
+                    <section className={styles.winner}>
                         <h3>🎉 Winner: {selectedOption}!</h3>
                     </section>
                 )}

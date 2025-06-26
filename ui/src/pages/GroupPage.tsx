@@ -1,6 +1,10 @@
 import {useEffect, useState} from "react";
 import AuthCheck from "../components/Auth/AuthCheck";
 import {Link} from "react-router-dom";
+import styles from "../components/Groups/Groups.module.css"
+import CreateGroup from "../components/Groups/CreateGroup.tsx";
+import JoinGroup from "../components/Groups/JoinGroup.tsx";
+import JoinRandomGroup from "../components/Groups/JoinRandomGroup.tsx";
 
 
 const GroupPage = () => {
@@ -30,17 +34,22 @@ const GroupPage = () => {
 
 
     return (
-        <section>
-            <h2>My Groups</h2>
-            <ul>
-                {Object.entries(groupData).map(([key, values]) => (
-                    <li key={key}>
+        <section className={styles.groupsPage}>
+            <section className={styles.mygroups}>
+                <h2>My Groups</h2>
+                <ul>
+                    {Object.entries(groupData).map(([key, values]) => (
                         <Link to={`/group/${values[0]}`}>
-                            {values[0]}) <strong>{values[1]}</strong>: {values[2]}
+                            <li key={key}>
+                                {values[0]}) <strong>{values[1]}</strong>: {values[2]}
+                            </li>
                         </Link>
-                    </li>
-                ))}
-            </ul>
+                    ))}
+                </ul>
+            </section>
+            <CreateGroup />
+            <JoinGroup />
+            <JoinRandomGroup />
         </section>
     )
 }

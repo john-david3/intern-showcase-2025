@@ -25,3 +25,4 @@ serve:
 install-deps:
 	@pip3 install -r requirements.txt
 	@npm install react-router-dom
+	@cd ui && npm install -D vite

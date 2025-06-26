@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import AuthCheck from "../components/Auth/AuthCheck";
 import {useParams} from "react-router-dom";
 import Wheel from "../components/Wheel/Wheel.tsx";
+import styles from "../components/Groups/Groups.module.css"
 import Chat from "../components/Chat/Chat.tsx";
 
 const GroupX = () => {
@@ -30,9 +31,9 @@ const GroupX = () => {
     }, []);
 
     return (
-        <>
-            <section>
-                <h2>{groupInfo ? groupInfo["data"][0] : "data"}</h2>
+        <section className={styles.groupx}>
+            <section className={styles.groupxInfo}>
+                <h2>Group: {groupInfo ? groupInfo["data"][0] : "data"}</h2>
                 <p>Description: {groupInfo ? groupInfo["data"][1] : "data"}</p>
                 <p>Code: {groupInfo ? groupInfo["data"][2] : "data"}</p>
             </section>
@@ -44,7 +45,7 @@ const GroupX = () => {
             <section>
                 <Chat groupId={gid}></Chat>
             </section>
-        </>
+        </section>
     )
 }
 

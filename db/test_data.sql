@@ -59,3 +59,53 @@ ON
     gw.wid = w.wid
 WHERE
     g.gid = 1;
+
+-- offices --
+INSERT INTO offices (region, office_name, address, city, country, postcode, picture)
+VALUES
+    (
+    'Americas',
+    'Seattle, WA Corporate HQ',
+    '801 5th Ave',
+    'Seattle',
+    'United States',
+    'WA 98104',
+    'seattleoffice.jpeg'
+    ),
+    (
+    'Americas',
+     'Washington, DC',
+     '11921 Freedom Dr. Suite 710',
+     'Reston',
+     'United State',
+     ' VA 20190',
+     'img.jpg'
+    ),
+    (
+    'Americas',
+    'Toronto, ON, Canada',
+        'First Canadian Place, 100 King Street West, Suite 56000',
+    'Toronto',
+    'Canada',
+    'ONM5X 1C9',
+    'img.jpg'
+    )
+        ,
+    (
+    'Americas',
+    'Spokane, WA',
+    '23321 E Knox Ave',
+    'Liberty Lake',
+    'United States',
+    'WA 99019',
+    'img.jpg'
+    ),
+    (
+    'EMEA',
+    'NGINX Ireland',
+    '3/F, 89/90 South Mall',
+    'Cork',
+    'Ireland',
+    'T12KXV9',
+    'nginxIreland.jpeg'
+    );
