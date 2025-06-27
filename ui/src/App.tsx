@@ -1,4 +1,3 @@
-import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import GroupPage from "./pages/GroupPage.tsx"
 import GroupX from "./pages/GroupX.tsx";

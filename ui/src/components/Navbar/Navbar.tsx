@@ -1,7 +1,7 @@
 import {Link} from "react-router-dom";
 import {useState} from "react";
 import styles from './Navbar.module.css';
-import logo from '../../assets/f5connect.png'
+import logo from '../../assets/f5together.png'
 
 
 interface NavItem {
