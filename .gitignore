@@ -1,6 +1,8 @@
 identifier.sqlite
 /flask_session
-ui/node_modules
+ui/node_modules/
 .venv
-node_modules
+.venv/
+node_modules/
 .DS_Store
+.idea/

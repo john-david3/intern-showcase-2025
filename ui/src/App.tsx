@@ -1,4 +1,3 @@
-import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import GroupPage from "./pages/GroupPage.tsx"
 import GroupX from "./pages/GroupX.tsx";
@@ -10,6 +9,7 @@ import JoinGroup from "./components/Groups/JoinGroup.tsx";
 import JoinRandomGroup from "./components/Groups/JoinRandomGroup.tsx";
 import ChatForm from "./components/Chat/ChatForm.tsx";
 import {SocketProvider} from "./contexts/SocketContext.tsx";
+import Profile from "./pages/Profile.tsx";
 
 function App() {
   return (
@@ -25,6 +25,7 @@ function App() {
                 <Route path="/join_group" element={<JoinGroup />} />
                 <Route path="/join_random_group" element={<JoinRandomGroup />} />
                 <Route path="/chat" element={<SocketProvider><ChatForm groupId={''} /></SocketProvider>} />
+                <Route path="/profile" element={<Profile />} />
             </Routes>
         </section>
     </Router>

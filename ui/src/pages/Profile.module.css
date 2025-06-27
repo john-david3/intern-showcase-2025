@@ -1,0 +1,6 @@
+.profilePage {
+    background: var(--accent-pistachio);
+    display: flex;
+    justify-content: center;
+    min-height: 75dvh;
+}
