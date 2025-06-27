@@ -61,51 +61,39 @@ WHERE
     g.gid = 1;
 
 -- offices --
-INSERT INTO offices (region, office_name, address, city, country, postcode, picture)
+INSERT INTO offices (region, office_name)
 VALUES
-    (
-    'Americas',
-    'Seattle, WA Corporate HQ',
-    '801 5th Ave',
-    'Seattle',
-    'United States',
-    'WA 98104',
-    'seattleoffice.jpeg'
-    ),
-    (
-    'Americas',
-     'Washington, DC',
-     '11921 Freedom Dr. Suite 710',
-     'Reston',
-     'United State',
-     ' VA 20190',
-     'img.jpg'
-    ),
-    (
-    'Americas',
-    'Toronto, ON, Canada',
-        'First Canadian Place, 100 King Street West, Suite 56000',
-    'Toronto',
-    'Canada',
-    'ONM5X 1C9',
-    'img.jpg'
-    )
-        ,
-    (
-    'Americas',
-    'Spokane, WA',
-    '23321 E Knox Ave',
-    'Liberty Lake',
-    'United States',
-    'WA 99019',
-    'img.jpg'
-    ),
-    (
-    'EMEA',
-    'NGINX Ireland',
-    '3/F, 89/90 South Mall',
-    'Cork',
-    'Ireland',
-    'T12KXV9',
-    'nginxIreland.jpeg'
-    );
+    ('Americas','Seattle, WA Corporate HQ'),
+    ('APACJ','Australia'),
+    ('APACJ','India, Bangalore Office'),
+    ('EMEA','Spain, Barcelona Office'),
+    ('Americas','Boulder, Colorado Office'),
+    ('Americas','Brazil'),
+    ('EMEA','UK, Chertsey Office'),
+    ('APACJ','China Office'),
+    ('EMEA','Czech Republic'),
+    ('EMEA','France'),
+    ('EMEA','Germany'),
+    ('APACJ','India, Hyderabad Office'),
+    ('EMEA','Ireland, Cork Office'),
+    ('EMEA','Israel'),
+    ('EMEA','Italy'),
+    ('APACJ','Japan, Tokyo Office'),
+    ('EMEA','UK, London Office'),
+    ('EMEA','Spain, Madrid Office'),
+    ('APACJ','Malaysia'),
+    ('Americas','Mexico'),
+    ('APACJ','India, Mumbai Office'),
+    ('EMEA','Netherlands'),
+    ('APACJ','India, New Delhi Office'),
+    ('APACJ','New Zealand'),
+    ('APACJ','Philippines'),
+    ('EMEA','Poland'),
+    ('EMEA','Qatar'),
+    ('Americas','San Jose, California Office'),
+    ('APACJ','Singapore'),
+    ('APACJ','South Korea'),
+    ('APACJ','Thailand'),
+    ('Americas','Toronto, Ontario'),
+    ('EMEA','UAE'),
+    ('APACJ','Vietnam');
