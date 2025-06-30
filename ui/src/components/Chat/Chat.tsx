@@ -34,6 +34,10 @@ const Chat = ({ groupId }: { groupId: string }) => {
     return (
         <section className="chat_window">
             <h2>Chat</h2>
+            <p><strong>Nutsa B:</strong> Hey everyone! Want to get some lunch?</p>
+            <p><strong>John David W:</strong> Yeah! Where do you want to go?</p>
+            <p><strong>Nutsa B:</strong> I don't know. How about we spin the wheel!</p>
+            <p><strong>Mohamad A:</strong> Great idea!</p>
             {messages.map((msg, idx) => (
                 <section className="chatBox" key={idx}>
                     <strong>{msg.name}:</strong> {msg.message}
