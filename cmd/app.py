@@ -79,7 +79,7 @@ def login():
         print("exception in login")
         return jsonify({"logged_in": False})
 
-@app.route("/logout")
+@app.route("/logout", methods=['POST'])
 def logout():
     session.clear()
     return jsonify({"logged_in": False})
