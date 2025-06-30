@@ -113,3 +113,37 @@
     margin: 0.25rem 0;
     color: var(--text-muted);
 }
+
+.joinRandomWindow{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(250, 255, 250, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.joinRandomWindow h1{
+    background-color: var(--background-other);
+    padding: 1rem;
+    font-size: 1.4rem;
+    color: var(--text);
+    align-content: center;
+}
+
+.closeSelectorBtn{
+    border-radius: 2px;
+    padding: 0.2em 0.3em;
+    align-self: center;
+    margin-bottom: 1rem;
+}
+
+.openWheel{
+    align-self: center;
+}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSocket } from "../../contexts/SocketContext.tsx";
-import Chat from "./Chat.tsx";
+import styles from './chat.module.css'
 
 interface ChatFormData {
     message: string;
@@ -54,7 +54,7 @@ const ChatForm = ({ groupId }: {groupId: string}) => {
     };
 
     return (
-        <section>
+        <section className={styles.chatSection}>
             <form onSubmit={handleSubmit} id="chat">
                 <input
                     name="message"

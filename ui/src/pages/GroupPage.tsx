@@ -9,7 +9,7 @@ import JoinRandomGroup from "../components/Groups/JoinRandomGroup.tsx";
 
 const GroupPage = () => {
     const [groupData, setGroupData] = useState<string[]>([]);
-
+    const [isRandomOpen, setRandomOpen] = useState(false);
     <AuthCheck />
 
     useEffect(() => {
@@ -31,7 +31,13 @@ const GroupPage = () => {
         fetchUserGroups();
     }, []);
 
+    const openRandom = () => {
+        setRandomOpen(true);
+    }
 
+    const closeRandom = () => {
+        setRandomOpen(false);
+    }
 
     return (
         <section className={styles.groupsPage}>
@@ -49,7 +55,17 @@ const GroupPage = () => {
             </section>
             <CreateGroup />
             <JoinGroup />
-            <JoinRandomGroup />
+            <button onClick={openRandom}>Join a Random Group</button>
+
+            {
+                isRandomOpen && (
+                    <section className={styles.joinRandomWindow}>
+                        <JoinRandomGroup />
+                        <button onClick={closeRandom} className={styles.closeBtn}>Close</button>
+                    </section>
+
+                )
+            }
         </section>
     )
 }
