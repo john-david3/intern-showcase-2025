@@ -30,6 +30,9 @@ func Run() {
 	// Chat
 	mux.HandleFunc("/api/get_user_info", GetUserInfo)
 
+	// Profile
+	mux.HandleFunc("/api/get_profile_info", GetProfileInfo)
+
 	handlerWithMiddleware := utils.CORSMiddleware(mux)
 
 	slog.Info("server running on http://localhost:8080")

@@ -15,10 +15,21 @@ const Profile = () => {
     const [user, setUser] = useState<ProfileProps | null>(null);
 
     useEffect(() => {
-        fetch("api/get_user_info")
-            .then(res => res.json())
-            .then(data => setUser(data))
-            .catch(err => console.error("Failed to get user data: ", err))
+        const fetchProfile = async() => {
+            try{
+                const response = await fetch("http://localhost:5000/get_user_info", {
+                    credentials: "include"
+                });
+                if (!response.ok) throw new Error("Failed to fetch profile information");
+                const data = await response.json();
+                console.log("GOT DA DATA", data);
+
+                setUser(data);
+            } catch (error){
+                console.error("Error fetching profile info", error);
+            }
+        };
+        fetchProfile();
     }, []);
 
     if (!user) return (<p>Loading user data</p>)
