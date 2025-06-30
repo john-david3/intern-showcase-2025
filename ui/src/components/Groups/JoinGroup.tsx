@@ -62,6 +62,7 @@ const JoinGroup = () => {
 
                 if (data.joined_group == "true") {
                     console.log("Joined group successfully");
+                    window.location.reload();
                 } else {
                     console.log("Failed to join group.");
                 }
