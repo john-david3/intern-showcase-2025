@@ -11,11 +11,6 @@ type Office struct {
 	ID         int    `json:"id"`
 	Region     string `json:"region"`
 	Officename string `json:"officename"`
-	Address    string `json:"address"`
-	City       string `json:"city"`
-	Country    string `json:"country"`
-	Postcode   string `json:"postcode"`
-	Picture    string `json:"picture"`
 }
 
 func GetOffices(w http.ResponseWriter, r *http.Request) {
@@ -39,8 +34,7 @@ func GetOffices(w http.ResponseWriter, r *http.Request) {
 	var offices []Office
 	for rows.Next() {
 		var office Office
-		err := rows.Scan(&office.ID, &office.Region, &office.Officename, &office.Address, &office.City, &office.Country,
-			&office.Postcode, &office.Picture)
+		err := rows.Scan(&office.ID, &office.Region, &office.Officename)
 		if err != nil {
 			utils.SendErrorResponse(w, err, "error getting office data", "offices_loaded")
 			return
