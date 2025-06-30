@@ -25,7 +25,7 @@ func Run() {
 
 	// Location
 	mux.HandleFunc("/api/offices", GetOffices)
-	mux.HandleFunc("/api/user/location", UpdateUserLocation)
+	mux.HandleFunc("/api/update_user_location", UpdateUserLocation)
 
 	// Chat
 	mux.HandleFunc("/api/get_user_info", GetUserInfo)

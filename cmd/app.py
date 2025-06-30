@@ -329,7 +329,7 @@ def session_status():
         return jsonify({"logged_in": False})
 
 #Offices Routes
-@app.route("/offices", methods=["GET"])
+@app.route("/offices", methods=["GET", "POST"])
 def get_offices():
     try:
         res = requests.get("http://localhost:8080/api/offices")

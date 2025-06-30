@@ -36,13 +36,22 @@ const OfficeLocation = () => {
     const [isSelectorOpen, setSelectorOpen] = useState(false);
 
     useEffect(() => {
-        fetch('http://localhost:5000/offices')
-            .then(res => res.json())
-            .then((data) =>{
-                console.log("Offices fetched: ", data);
+        const fetchOfficeLocation = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/offices", {
+                    credentials: "include"
+                });
+                if (!response.ok) throw new Error("Failed to fetch groups");
+                const data = await response.json();
+                console.log(data);
+
                 setOffices(data);
-            })
-            .catch((err) => console.error("failed to load office information", err));
+            } catch (error) {
+                console.error("Error fetching groups: ", error);
+            }
+        };
+
+        fetchOfficeLocation();
     }, []);
 
     const openSelector = (region: string) => {
@@ -54,17 +63,24 @@ const OfficeLocation = () => {
         setSelectorOpen(false);
     }
 
-    const handleSave = (region: string, office: Office | null, closeAfterSave = false) => {
+
+    const handleSave = async (region: string, office: Office | null, closeAfterSave = false) => {
         setSelectedRegion(region);
         if (office) {
             setSelectedOffice(office);
-            fetch('http://localhost:5000/user/location', {
-                method: 'POST',
-                headers: {
-                    'Content-Type' : 'application/json'
-                },
-                body: JSON.stringify({ office_id: office.id})
-            }).catch((err) => console.error("Failed to update location", err));
+
+            try{
+                fetch('http://localhost:5000/user/location', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type' : 'application/json'
+                    },
+                    body: JSON.stringify({ office_id: office.id})
+                });
+            }
+            catch (error){
+                console.log(error);
+            }
         }
         if (closeAfterSave) {
             setSelectorOpen(false);
