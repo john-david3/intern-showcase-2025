@@ -2,6 +2,7 @@ import styles from "./Profile.module.css";
 import defaultpfp from "../assets/defaultpfp.png"
 import defaultbckg from "../assets/defaultbckg.jpg"
 import {useEffect, useState} from "react";
+import randomBckg from "../assets/randomBckg.jpg"
 
 interface ProfileProps {
     pfp?: string;
@@ -32,7 +33,22 @@ const Profile = () => {
         fetchProfile();
     }, []);
 
-    if (!user) return (<p>Loading user data</p>)
+    if (!user) return (
+        <section
+            className={styles.profileDefault}
+            style={{backgroundImage: `url(${randomBckg})`}}    >
+            <section className={styles.profileDefaultContent}>
+                <h1>Log in to see the profile content</h1>
+                <section>
+                    <a href={"/login_signup"} >
+                        <button className={styles.getStartedButton}>
+                            Get Started
+                        </button>
+                    </a>
+                </section>
+            </section>
+        </section>
+    )
 
     return (
         <section className={styles.profileContainer}>

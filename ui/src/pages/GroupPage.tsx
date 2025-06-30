@@ -5,6 +5,7 @@ import styles from "../components/Groups/Groups.module.css"
 import CreateGroup from "../components/Groups/CreateGroup.tsx";
 import JoinGroup from "../components/Groups/JoinGroup.tsx";
 import JoinRandomGroup from "../components/Groups/JoinRandomGroup.tsx";
+import randomBckg from "../assets/randomBckg.jpg"
 
 
 const GroupPage = () => {
@@ -60,8 +61,11 @@ const GroupPage = () => {
             {
                 isRandomOpen && (
                     <section className={styles.joinRandomWindow}>
-                        <JoinRandomGroup />
-                        <button onClick={closeRandom} className={styles.closeBtn}>Close</button>
+                        <section className={styles.randomWindowOverlay}
+                                 style={{ backgroundImage: `url(${randomBckg})` }}>
+                            <JoinRandomGroup />
+                            <button onClick={closeRandom} className={styles.closeBtn}>Close</button>
+                        </section>
                     </section>
 
                 )

@@ -40,6 +40,45 @@
     margin-top: 1rem;
 }
 
+.profileDefault{
+    display: flex;
+    justify-content: center;
+    min-height: 75dvh;
+    background-size: cover;
+    flex-direction: column;
+    align-items: center;
+}
+.profileDefaultContent{
+    display: flex;
+    flex-direction: column;
+}
 
+.profileDefaultContent h1{
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    margin: 4rem;
+    padding: 4rem;
+    background: linear-gradient(to bottom, var(--accent-pistachio), white);
+    color: var(--text-muted);
+}
+.getStartedButton {
+    display: flex;
+    align-self: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    border-radius: 1rem;
+    padding: 2rem 3rem;
+    font-weight: bold;
+    font-size: 20px;
+    color:  var(--text-muted);
+}
 
+.getStartedButton:hover{
+    color:  var(--accent-hover);
+}
 
+.getStartedButton a:hover{
+    color: var(--accent-beige);
+}
+
+.profileDefaultContent section{
+    align-self: center;
+}
