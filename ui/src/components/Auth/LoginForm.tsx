@@ -78,7 +78,6 @@ const LoginForm = () => {
 
     return (
         <section className={styles.authform}>
-            <p>{isLoggedIn ? "You are currently logged in." : "You are not logged in currently."}</p>
 
             <form onSubmit={handleSubmit} id="login-form">
                 {errors.general && (
