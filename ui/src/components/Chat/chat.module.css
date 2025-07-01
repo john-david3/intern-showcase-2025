@@ -1,0 +1,42 @@
+.chatSection {
+    width:100%;
+    padding: 1rem;
+    background-color: var(--background-other);
+}
+
+.chatSection form{
+    display:flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.chatSection input{
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--accent-pistachio);
+    border-radius: 999px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.chatSection input:focus {
+    border-color: var(--accent-beige);
+}
+
+.chatSection button{
+    padding: 0.75rem 1.2rem;
+    background-color: var(--accent-pistachio);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.chatSection button:hover {
+    background-color: var(--accent-beige);
+}

@@ -66,6 +66,7 @@ const CreateGroup = () => {
 
                 if (data.group_created == "true") {
                     console.log("Group created successfully");
+                    window.location.reload();
                 } else {
                     console.log("Failed to create group.");
                 }

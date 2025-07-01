@@ -5,11 +5,12 @@ import styles from "../components/Groups/Groups.module.css"
 import CreateGroup from "../components/Groups/CreateGroup.tsx";
 import JoinGroup from "../components/Groups/JoinGroup.tsx";
 import JoinRandomGroup from "../components/Groups/JoinRandomGroup.tsx";
+import randomBckg from "../assets/randomBckg.jpg"
 
 
 const GroupPage = () => {
     const [groupData, setGroupData] = useState<string[]>([]);
-
+    const [isRandomOpen, setRandomOpen] = useState(false);
     <AuthCheck />
 
     useEffect(() => {
@@ -31,7 +32,13 @@ const GroupPage = () => {
         fetchUserGroups();
     }, []);
 
+    const openRandom = () => {
+        setRandomOpen(true);
+    }
 
+    const closeRandom = () => {
+        setRandomOpen(false);
+    }
 
     return (
         <section className={styles.groupsPage}>
@@ -49,7 +56,20 @@ const GroupPage = () => {
             </section>
             <CreateGroup />
             <JoinGroup />
-            <JoinRandomGroup />
+            <button onClick={openRandom}>Join a Random Group</button>
+
+            {
+                isRandomOpen && (
+                    <section className={styles.joinRandomWindow}>
+                        <section className={styles.randomWindowOverlay}
+                                 style={{ backgroundImage: `url(${randomBckg})` }}>
+                            <JoinRandomGroup />
+                            <button onClick={closeRandom} className={styles.closeBtn}>Close</button>
+                        </section>
+                    </section>
+
+                )
+            }
         </section>
     )
 }

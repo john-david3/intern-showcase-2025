@@ -62,6 +62,7 @@ const LoginForm = () => {
                 if (data.logged_in) {
                     console.log("Login Successful!");
                     setIsLoggedIn(true);
+                    window.location.reload();
                 } else {
                     console.log("Failed to log in.");
                     setIsLoggedIn(false);

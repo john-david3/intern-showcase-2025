@@ -31,8 +31,8 @@ const JoinRandomGroup = () => {
 
     return (
         <section className={styles.joinrandom}>
-            <h2>Join a Random Group</h2>
-            <h1>{ displayedResult ? "Joined random group" : "Could not join random group" }</h1>
+            <h1>Join a Random Group</h1>
+            <p>{ displayedResult ? "Successfully joined a random group" : "Could not join a random group" }</p>
         </section>
     );
 };

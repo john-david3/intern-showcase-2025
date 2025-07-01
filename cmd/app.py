@@ -79,7 +79,7 @@ def login():
         print("exception in login")
         return jsonify({"logged_in": False})
 
-@app.route("/logout")
+@app.route("/logout", methods=['POST'])
 def logout():
     session.clear()
     return jsonify({"logged_in": False})
@@ -265,6 +265,24 @@ def handle_leave(data) -> None:
             "message": f"Leaving chat for group {group_id}"
         }, room=group_id)
 
+@app.route("/get_user_info", methods=["GET", "POST"])
+def get_user_info():
+    user_id = session.get("user_id")
+
+    # Get the email
+    headers = {
+        "X-User-ID": str(user_id),
+    }
+
+    try:
+        r = requests.post("http://localhost:8080/api/get_profile_info", headers=headers)
+        return r.json()
+
+    except Exception:
+        print("Failed to get user email")
+        return None
+
+
 @socketio.on("send_message")
 def send_message(data) -> None:
     group_id = data.get("group_id")
@@ -311,7 +329,7 @@ def session_status():
         return jsonify({"logged_in": False})
 
 #Offices Routes
-@app.route("/offices", methods=["GET"])
+@app.route("/offices", methods=["GET", "POST"])
 def get_offices():
     try:
         res = requests.get("http://localhost:8080/api/offices")
