@@ -47,6 +47,6 @@ CREATE TABLE wheel_options(
 DROP TABLE IF EXISTS offices;
 CREATE TABLE offices (
     office_id       INTEGER PRIMARY KEY AUTOINCREMENT,
-    region          TEXT NOT NULL CHECK(region IN ('Americas', 'EMEA', 'APACJ')),
+    region          TEXT NOT NULL CHECK(region IN ('Americas', 'EMEA', 'APCJ')),
     office_name     TEXT NOT NULL
 );

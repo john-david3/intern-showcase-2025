@@ -25,7 +25,7 @@ type Region = {
 const regions: Region[] = [
     { name: "Americas", picture: americasImg },
     { name: "EMEA", picture: emeaImg },
-    { name: "APACJ", picture: asiaImg }
+    { name: "APCJ", picture: asiaImg }
 ]
 
 const OfficeLocation = () => {
