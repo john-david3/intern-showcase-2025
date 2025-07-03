@@ -25,4 +25,4 @@ This project is a full stack web app. Our tech stack consists of the following:
 ### Our Roles
 - John David: Backend developer and Database Architect
 - Nutsa: Frontend developer
-- Mohamad:
+- Mohamad: Wheel
