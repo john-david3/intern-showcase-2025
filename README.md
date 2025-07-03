@@ -1,4 +1,4 @@
-# 2025 NGINX Intern Showcase
+# 2025 F5 Intern Showcase
 Team: John David White, Nutsa Bidzishvili, Mohamad Aldawamneh
 
 ## Office Events Planning App
